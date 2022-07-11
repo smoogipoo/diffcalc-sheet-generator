@@ -22,9 +22,7 @@ OSU_A_DIR=""
 OSU_A_HASH=""
 OSU_B_DIR=""
 OSU_B_HASH=""
-
 RULESET_ID=0
-HIGH_SCORES_SUFFIX=""
 
 NC='\033[0m'
 YELLOW='\033[0;33m'
@@ -135,6 +133,25 @@ function wait_for_step() {
     done
 }
 
+case "$RULESET" in
+    "osu")
+        RULESET_ID=0
+        ;;
+    "taiko")
+        RULESET_ID=1
+        ;;
+    "catch")
+        RULESET_ID=2
+        ;;
+    "mania")
+        RULESET_ID=3
+        ;;
+    *)
+        echo "RULESET environment variable missing."
+        exit 1;
+        ;;
+esac
+
 # Checkout + setup hashes/dirs/etc.
 
 WORKDIR_A=$(mktemp -d)
@@ -158,6 +175,8 @@ OSU_B_HASH=$(get_hash $OSU_B_DIR)
 echo "[HASH_A] => ${OSU_A_HASH}"
 echo "[HASH_B] => ${OSU_B_HASH}"
 
+export RULESET
+export RULESET_ID
 export OSU_A_HASH
 export OSU_B_HASH
 export NO_CONVERTS

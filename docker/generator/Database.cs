@@ -9,20 +9,7 @@ public static class Database
 {
     public static async Task<MySqlConnection> GetConnection()
     {
-        string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? String.Empty;
-
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            string host = (Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost");
-            string user = (Environment.GetEnvironmentVariable("DB_USER") ?? "root");
-            string password = (Environment.GetEnvironmentVariable("DB_PASS") ?? string.Empty);
-
-            string passwordString = string.IsNullOrEmpty(password) ? string.Empty : $"Password={password};";
-
-            connectionString = $"Server={host};User ID={user};{passwordString}ConnectionTimeout=5;ConnectionReset=false;Pooling=true;";
-        }
-
-        var connection = new MySqlConnection(connectionString);
+        var connection = new MySqlConnection("Server=db;User ID=root;ConnectionTimeout=5;ConnectionReset=false;Pooling=true;");
         await connection.OpenAsync();
         return connection;
     }
