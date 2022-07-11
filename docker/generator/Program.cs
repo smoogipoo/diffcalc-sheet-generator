@@ -4,6 +4,8 @@ string osuA = Environment.GetEnvironmentVariable("OSU_A_HASH") ?? throw new Inva
 string osuB = Environment.GetEnvironmentVariable("OSU_B_HASH") ?? throw new InvalidOperationException("Missing OSU_B_HASH environment variable.");
 
 DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create($"{osuA[..7]} (A) vs {osuB[..7]} (B)");
+Console.WriteLine($"Spreadsheet created: {spreadsheet.SpreadSheet.SpreadsheetUrl}");
+Console.WriteLine("Now generating...");
 
 List<Task> tasks = new List<Task>
 {
@@ -59,4 +61,4 @@ List<Task> tasks = new List<Task>
 
 await Task.WhenAll(tasks);
 
-Console.WriteLine($"Spreadsheet generated. {spreadsheet.SpreadSheet.SpreadsheetUrl}");
+Console.WriteLine("Spreadsheet generation finished.");
