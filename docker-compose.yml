@@ -46,12 +46,12 @@ services:
 
   diffcalc:
     <<: *x-common
-    working_dir: '/app/osu_diffcalc'
+    working_dir: '/app/diffcalc'
     command: [ './start.sh' ]
 
   ppcalc:
     <<: *x-common
-    working_dir: '/app/osu_ppcalc'
+    working_dir: '/app/ppcalc'
     command: [ './start.sh' ]
 
   generator:
