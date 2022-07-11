@@ -1,11 +1,5 @@
 version: '3.8'
 
-###############################################
-#                                             #
-# Anything below does not need to be touched. #
-#                                             #
-###############################################
-
 x-common: &x-common
   depends_on:
     db:
