@@ -65,4 +65,4 @@ List<Task> tasks = new List<Task>
 
 await Task.WhenAll(tasks);
 
-Console.WriteLine("Spreadsheet generation finished.");
+Console.WriteLine($"Spreadsheet generation finished: {spreadsheet.SpreadSheet.SpreadsheetUrl}");
