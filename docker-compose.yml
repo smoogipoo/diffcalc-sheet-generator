@@ -6,17 +6,14 @@ version: '3.8'
 #                                             #
 ###############################################
 
-x-env: &x-env
-  env_file:
-    - .env
-
 x-common: &x-common
-  <<: *x-env
   depends_on:
     db:
       condition: service_healthy
     redis:
       condition: service_healthy
+  env_file:
+    - .env
   volumes:
     - ./docker:/app
     - ./beatmaps:/beatmaps
@@ -27,7 +24,6 @@ x-common: &x-common
 
 services:
   db:
-    <<: *x-env
     image: mysql:8.0
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
@@ -62,4 +58,12 @@ services:
   ppcalc:
     <<: *x-common
     working_dir: '/app/osu_ppcalc'
+    command: [ './start.sh' ]
+
+  generator:
+    <<: *x-common
+    working_dir: '/app/generator'
+    volumes:
+      - ./docker:/app
+      - ${GOOGLE_CREDENTIALS_FILE}:/credentials.json
     command: [ './start.sh' ]

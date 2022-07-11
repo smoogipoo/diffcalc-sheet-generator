@@ -157,3 +157,8 @@ OSU_B_HASH=$(get_hash $OSU_B_DIR)
 
 echo "[HASH_A] => ${OSU_A_HASH}"
 echo "[HASH_B] => ${OSU_B_HASH}"
+
+export OSU_A_HASH
+export OSU_B_HASH
+export NO_CONVERTS
+export RANKED_ONLY
