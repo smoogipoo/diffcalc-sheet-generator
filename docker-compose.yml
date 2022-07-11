@@ -1,0 +1,65 @@
+version: '3.8'
+
+###############################################
+#                                             #
+# Anything below does not need to be touched. #
+#                                             #
+###############################################
+
+x-env: &x-env
+  env_file:
+    - .env
+
+x-common: &x-common
+  <<: *x-env
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  volumes:
+    - ./docker:/app
+    - ./beatmaps:/beatmaps
+    - ./sql:/sql
+  build:
+    context: ./docker
+    dockerfile: Dockerfile
+
+services:
+  db:
+    <<: *x-env
+    image: mysql:8.0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./db:/etc/mysql/conf.d
+    ports:
+      - "33306:3306"
+
+  redis:
+    image: redis:latest
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  importer:
+    <<: *x-common
+    working_dir: '/app/importer'
+    command: [ './import.sh' ]
+
+  diffcalc:
+    <<: *x-common
+    working_dir: '/app/osu_diffcalc'
+    command: [ './start.sh' ]
+
+  ppcalc:
+    <<: *x-common
+    working_dir: '/app/osu_ppcalc'
+    command: [ './start.sh' ]
