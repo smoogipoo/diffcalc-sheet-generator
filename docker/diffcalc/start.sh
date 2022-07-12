@@ -30,7 +30,7 @@ function run_processor() {
         all \
         --mode ${RULESET_ID} \
         --allow-converts \
-        --concurrency 16
+        --concurrency ${THREADS}
 
     set_db_step $db_name 2
 }

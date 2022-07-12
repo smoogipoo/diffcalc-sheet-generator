@@ -27,7 +27,7 @@ function process_scores() {
         scores \
         all \
         --ruleset ${RULESET_ID} \
-        --threads 16
+        --threads ${THREADS}
 
     set_db_step $db_name 3
 }
@@ -58,7 +58,7 @@ function process_totals() {
         user-totals \
         all \
         --ruleset ${RULESET_ID} \
-        --threads 16
+        --threads ${THREADS}
 
     set_db_step $db_name 4
 }

@@ -181,3 +181,4 @@ export OSU_A_HASH
 export OSU_B_HASH
 export NO_CONVERTS
 export RANKED_ONLY
+export THREADS
