@@ -66,7 +66,7 @@ public class DiffGenerator
                 + "     ON `b`.`beatmap_id` = `s`.`beatmap_id` "
                 + "WHERE `s`.`ruleset_id` = @RulesetId "
                 + beatmapQuery
-                + "     AND ABS(`a`.`pp` - `b`.`pp` > 0.1) "
+                + "     AND ABS(`a`.`pp` - `b`.`pp`) > 0.1 "
                 + $"    AND JSON_EXTRACT(`s`.`data`, \"$.mods[0]\") {modComparison}"
                 + "ORDER BY `b`.`pp` - `a`.`pp` "
                 + order
@@ -136,7 +136,7 @@ public class DiffGenerator
                 + "     ON `m`.`beatmap_id` = `a`.`beatmap_id` "
                 + "WHERE `a`.`mode` = @RulesetId "
                 + beatmapQuery
-                + "     AND ABS(`a`.`diff_unified` - `b`.`diff_unified` > 0.1) "
+                + "     AND ABS(`a`.`diff_unified` - `b`.`diff_unified`) > 0.1 "
                 + $"    AND `a`.`mods` {modComparison}"
                 + "ORDER BY `b`.`diff_unified` - `a`.`diff_unified` "
                 + order
