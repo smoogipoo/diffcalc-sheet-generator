@@ -19,6 +19,8 @@ x-common: &x-common
 services:
   db:
     image: mysql:8.0
+    env_file:
+      - .env
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     healthcheck:
@@ -30,6 +32,7 @@ services:
       - ./db:/etc/mysql/conf.d
     ports:
       - "33306:3306"
+    command: ['--innodb-buffer-pool-size=${INNODB_BUFFER_SIZE}']
 
   redis:
     image: redis:latest
