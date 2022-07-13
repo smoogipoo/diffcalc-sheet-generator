@@ -8,7 +8,7 @@ source ../common.sh
 function setup_database() {
     local db_name=$1
 
-    mysql "${MYSQL_ARGS[@]}" -e "CREATE DATABASE IF NOT EXISTS ${db_name}"
+    mysql "${MYSQL_ARGS[@]}" -e "CREATE DATABASE IF NOT EXISTS \`${db_name}\`"
 
     if [[ $(get_db_step ${db_name}) -ge 0 ]]; then
         echo "${db_name} is up to date!"
