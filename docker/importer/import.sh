@@ -28,9 +28,11 @@ function setup_database() {
 
 ### Imports highscores in a database.
 ###
-### Usage: import_scores <db_name>
+### Usage: import_scores <db_name> <workdir> <processor_repo>
 function import_scores() {
     local db_name=$1
+    local workdir=$2
+    local processor_repo=$3
 
     if [[ $(get_db_step ${db_name}) -ge 1 ]]; then
         echo "High scores have already been imported."
@@ -46,11 +48,14 @@ function import_scores() {
         --database="$db_name" \
         --execute="TRUNCATE TABLE solo_scores; TRUNCATE TABLE solo_scores_legacy_id_map; TRUNCATE TABLE solo_scores_performance; TRUNCATE TABLE solo_scores_process_history;"
 
-    clone_repo "https://github.com/ppy/osu-queue-score-statistics" "/osu-queue-score-statistics"
+    local processor_dir="${workdir}/osu-queue-score-statistics"
+    clone_repo "${processor_repo}" "${processor_dir}"
+    cd "${processor_dir}"
+    ./UseLocalOsu.sh
 
     DB_NAME=$db_name \
     dotnet run \
-        --project /osu-queue-score-statistics/osu.Server.Queues.ScorePump \
+        --project osu.Server.Queues.ScorePump \
         -- \
         queue \
         import-high-scores \
@@ -64,7 +69,7 @@ echo "Creating databases..."
 setup_database "${OSU_A_HASH}"
 setup_database "${OSU_B_HASH}"
 
-import_scores "${OSU_A_HASH}"
-import_scores "${OSU_B_HASH}"
+import_scores "${OSU_A_HASH}" "${WORKDIR_A}" "${SCORE_PROCESSOR_A}"
+import_scores "${OSU_B_HASH}" "${WORKDIR_B}" "${SCORE_PROCESSOR_B}"
 
 wait

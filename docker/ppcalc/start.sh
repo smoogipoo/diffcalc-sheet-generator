@@ -63,21 +63,21 @@ function process_totals() {
     set_db_step $db_name 4
 }
 
-SS_A_DIR="${WORKDIR_A}/osu-queue-score-statistics"
-SS_B_DIR="${WORKDIR_B}/osu-queue-score-statistics"
+PROCESSOR_A_DIR="${WORKDIR_A}/osu-queue-score-statistics"
+PROCESSOR_B_DIR="${WORKDIR_B}/osu-queue-score-statistics"
 
-echo "[SS_A] => ${SS_A_DIR}"
-echo "[SS_B] => ${SS_B_DIR}"
+echo "[PROCESSOR_A] => ${PROCESSOR_A_DIR}"
+echo "[PROCESSOR_B] => ${PROCESSOR_B_DIR}"
 
-clone_repo "https://github.com/ppy/osu-queue-score-statistics" "${SS_A_DIR}"
-cd "${SS_A_DIR}"
+clone_repo "${SCORE_PROCESSOR_A}" "${PROCESSOR_A_DIR}"
+cd "${PROCESSOR_A_DIR}"
 ./UseLocalOsu.sh
 
-clone_repo "https://github.com/ppy/osu-queue-score-statistics" "${SS_B_DIR}"
-cd "${SS_B_DIR}"
+clone_repo "${SCORE_PROCESSOR_B}" "${PROCESSOR_B_DIR}"
+cd "${PROCESSOR_B_DIR}"
 ./UseLocalOsu.sh
 
-process_scores "${OSU_A_HASH}" "${SS_A_DIR}"
-process_totals "${OSU_A_HASH}" "${SS_A_DIR}"
-process_scores "${OSU_B_HASH}" "${SS_B_DIR}"
-process_totals "${OSU_B_HASH}" "${SS_B_DIR}"
+process_scores "${OSU_A_HASH}" "${PROCESSOR_A_DIR}"
+process_totals "${OSU_A_HASH}" "${PROCESSOR_A_DIR}"
+process_scores "${OSU_B_HASH}" "${PROCESSOR_B_DIR}"
+process_totals "${OSU_B_HASH}" "${PROCESSOR_B_DIR}"
