@@ -18,10 +18,10 @@ function setup_database() {
     wait_for_step $db_name -1
 
     echo "Importing data in ${db_name}. This will take a while..."
-    (pv --force -p $(find /sql -type f -name "*.sql") | mysql "${MYSQL_ARGS[@]}" --database="$db_name") 2>&1 | stdbuf -o0 tr '\r' '\n'
+    (pv --force -p $(find "/sql/${RULESET}" -type f -name "*.sql") | mysql "${MYSQL_ARGS[@]}" --database="$db_name") 2>&1 | stdbuf -o0 tr '\r' '\n'
 
     echo "Applying fixes..."
-    (pv --force -p $(find /app/importer/fixes -type f -name "*.sql") | mysql "${MYSQL_ARGS[@]}" --database="$db_name") 2>&1 | stdbuf -o0 tr '\r' '\n'
+    (pv --force -p $(find "/app/importer/fixes" -type f -name "*.sql") | mysql "${MYSQL_ARGS[@]}" --database="$db_name") 2>&1 | stdbuf -o0 tr '\r' '\n'
 
     set_db_step $db_name 0
 }
