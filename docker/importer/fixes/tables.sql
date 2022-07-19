@@ -66,3 +66,10 @@ CREATE TABLE `osu_builds` (
   KEY `osu_builds_stream_id_index` (`stream_id`),
   KEY `osu_builds_allow_performance_index` (`allow_performance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `osu_user_month_playcount` (
+  `user_id` int unsigned NOT NULL DEFAULT '0',
+  `year_month` char(4) NOT NULL,
+  `playcount` smallint unsigned NOT NULL,
+  PRIMARY KEY (`user_id`,`year_month`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=COMPRESSED;
