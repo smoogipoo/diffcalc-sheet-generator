@@ -50,6 +50,7 @@ function process_totals() {
     ./UseLocalOsu.sh
 
     DB_NAME=$db_name \
+    PROCESS_USER_TOTALS="1" \
     dotnet run \
         -c:Release \
         --project osu.Server.Queues.ScorePump \
