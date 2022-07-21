@@ -71,12 +71,7 @@ echo "[PROCESSOR_A] => ${PROCESSOR_A_DIR}"
 echo "[PROCESSOR_B] => ${PROCESSOR_B_DIR}"
 
 clone_repo "${SCORE_PROCESSOR_A}" "${PROCESSOR_A_DIR}"
-cd "${PROCESSOR_A_DIR}"
-./UseLocalOsu.sh
-
 clone_repo "${SCORE_PROCESSOR_B}" "${PROCESSOR_B_DIR}"
-cd "${PROCESSOR_B_DIR}"
-./UseLocalOsu.sh
 
 process_scores "${OSU_A_HASH}" "${PROCESSOR_A_DIR}"
 process_totals "${OSU_A_HASH}" "${PROCESSOR_A_DIR}"
