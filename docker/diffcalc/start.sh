@@ -45,7 +45,10 @@ echo "[DIFFCALC_B] => ${DIFFCALC_B_DIR}"
 clone_repo "https://github.com/ppy/osu-difficulty-calculator" "${DIFFCALC_A_DIR}"
 clone_repo "https://github.com/ppy/osu-difficulty-calculator" "${DIFFCALC_B_DIR}"
 
-run_processor "${OSU_A_HASH}" "${DIFFCALC_A_DIR}"
-run_processor "${OSU_B_HASH}" "${DIFFCALC_B_DIR}"
+TIMEFORMAT="Completed in %3lR"
 
-wait
+echo "Running ${DIFFCALC_A_DIR}..."
+time run_processor "${OSU_A_HASH}" "${DIFFCALC_A_DIR}"
+
+echo "Running ${DIFFCALC_B_DIR}..."
+time run_processor "${OSU_B_HASH}" "${DIFFCALC_B_DIR}"

@@ -71,5 +71,3 @@ setup_database "${OSU_B_HASH}"
 
 import_scores "${OSU_A_HASH}" "${WORKDIR_A}" "${SCORE_PROCESSOR_A}"
 import_scores "${OSU_B_HASH}" "${WORKDIR_B}" "${SCORE_PROCESSOR_B}"
-
-wait
