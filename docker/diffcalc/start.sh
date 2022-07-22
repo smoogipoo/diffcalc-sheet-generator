@@ -19,18 +19,22 @@ function run_processor() {
     cd $diffcalc_dir
     ./UseLocalOsu.sh
 
-    DB_NAME=$db_name \
-    BEATMAPS_PATH="/beatmaps" \
-    ALLOW_DOWNLOAD=1 \
-    SAVE_DOWNLOADED=1 \
-    dotnet run \
-        -c:Release \
-        --project osu.Server.DifficultyCalculator \
-        -- \
-        all \
-        --mode ${RULESET_ID} \
-        --allow-converts \
-        --concurrency ${THREADS}
+    echo "Running ${diffcalc_dir}..."
+
+    time {
+        DB_NAME=$db_name \
+        BEATMAPS_PATH="/beatmaps" \
+        ALLOW_DOWNLOAD=1 \
+        SAVE_DOWNLOADED=1 \
+        dotnet run \
+            -c:Release \
+            --project osu.Server.DifficultyCalculator \
+            -- \
+            all \
+            --mode ${RULESET_ID} \
+            --allow-converts \
+            --concurrency ${THREADS}
+    }
 
     set_db_step $db_name 2
 }
@@ -47,8 +51,5 @@ clone_repo "https://github.com/ppy/osu-difficulty-calculator" "${DIFFCALC_B_DIR}
 
 TIMEFORMAT="Completed in %3lR"
 
-echo "Running ${DIFFCALC_A_DIR}..."
-time run_processor "${OSU_A_HASH}" "${DIFFCALC_A_DIR}"
-
-echo "Running ${DIFFCALC_B_DIR}..."
-time run_processor "${OSU_B_HASH}" "${DIFFCALC_B_DIR}"
+run_processor "${OSU_A_HASH}" "${DIFFCALC_A_DIR}"
+run_processor "${OSU_B_HASH}" "${DIFFCALC_B_DIR}"
