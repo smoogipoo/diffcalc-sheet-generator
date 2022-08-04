@@ -44,7 +44,7 @@ function clone_repo() {
         local target=${BASH_REMATCH[2]}
         local target_info=${BASH_REMATCH[3]}
 
-        git clone $repo $target_dir
+        git clone --filter=tree:0 $repo $target_dir
         pushd $target_dir > /dev/null
 
         case $target in
