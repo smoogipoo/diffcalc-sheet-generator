@@ -29,6 +29,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
+      - database:/var/lib/mysql
       - ./db:/etc/mysql/conf.d
     ports:
       - "33306:3306"
@@ -66,3 +67,6 @@ services:
       - ./docker:/app
       - ${GOOGLE_CREDENTIALS_FILE}:/credentials.json
     command: [ './start.sh' ]
+
+volumes:
+  database:
