@@ -35,7 +35,7 @@ RED='\033[0;31m'
 function clone_repo() {
     local url=$1
     local target_dir=$2
-    local re="^(https:\/\/github\.com\/[^\/]+\/[^\/]+)\/?([^\/]+)?\/?([^\/]+)?$"
+    local re="^(https:\/\/github\.com\/[^\/]+\/[^\/]+)\/?([^\/]+)?\/?([^\/]+)?(\/commits\/(.*))?$"
 
     echo "Cloning ${url} => ${target_dir}"
 
@@ -43,6 +43,7 @@ function clone_repo() {
         local repo=${BASH_REMATCH[1]}
         local target=${BASH_REMATCH[2]}
         local target_info=${BASH_REMATCH[3]}
+        local pr_commit=${BASH_REMATCH[5]}
 
         git clone --filter=tree:0 $repo $target_dir
         pushd $target_dir > /dev/null
@@ -50,6 +51,11 @@ function clone_repo() {
         case $target in
             pull)
                 gh pr checkout $target_info
+
+                if [[ $pr_commit ]]; then
+                    git checkout $pr_commit
+                fi
+
                 ;;
             commit | tree)
                 git checkout $target_info
