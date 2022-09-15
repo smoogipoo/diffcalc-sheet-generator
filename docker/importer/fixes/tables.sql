@@ -4,14 +4,15 @@ CREATE TABLE `solo_scores` (
   `beatmap_id` mediumint unsigned NOT NULL,
   `ruleset_id` smallint unsigned NOT NULL,
   `data` json NOT NULL,
+  `has_replay` tinyint(1) NOT NULL DEFAULT '0',
   `preserve` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `solo_scores_preserve_index` (`preserve`),
-  KEY `solo_scores_user_id_index` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78380399 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED;
+  KEY `solo_scores_beatmap_id_index` (`beatmap_id`),
+  KEY `user_ruleset_id_index` (`user_id`,`ruleset_id`,`id` DESC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED
 
 CREATE TABLE `solo_scores_legacy_id_map` (
   `ruleset_id` smallint unsigned NOT NULL,
