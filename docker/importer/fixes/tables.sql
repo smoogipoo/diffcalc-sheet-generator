@@ -12,7 +12,7 @@ CREATE TABLE `solo_scores` (
   KEY `solo_scores_preserve_index` (`preserve`),
   KEY `solo_scores_beatmap_id_index` (`beatmap_id`),
   KEY `user_ruleset_id_index` (`user_id`,`ruleset_id`,`id` DESC)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `solo_scores_legacy_id_map` (
   `ruleset_id` smallint unsigned NOT NULL,
