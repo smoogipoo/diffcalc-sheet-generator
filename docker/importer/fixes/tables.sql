@@ -74,3 +74,5 @@ CREATE TABLE `osu_user_month_playcount` (
   `playcount` smallint unsigned NOT NULL,
   PRIMARY KEY (`user_id`,`year_month`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=COMPRESSED;
+
+DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
