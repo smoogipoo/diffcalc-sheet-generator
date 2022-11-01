@@ -5,7 +5,7 @@ DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create(
     $"{Env.RULESET}: "
     + $"{Env.DB_A[..7]} (A) vs {Env.DB_B[..7]} (B) "
     + "| "
-    + $"converts: {Env.NO_CONVERTS}, "
+    + $"converts: {!Env.NO_CONVERTS}, "
     + $"ranked-only: {Env.RANKED_ONLY}");
 
 Console.WriteLine($"Spreadsheet created: {spreadsheet.SpreadSheet.SpreadsheetUrl}");
