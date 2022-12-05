@@ -8,6 +8,8 @@ x-common: &x-common
       condition: service_healthy
   env_file:
     - .env
+  environment:
+    REDIS_HOST: redis
   volumes:
     - ./docker:/app
     - ./beatmaps:/beatmaps
