@@ -11,6 +11,7 @@ export DB_HOST
 export DB_PORT
 export DB_USER
 
+
 MYSQL_ARGS=(
     -sN
     --host="${DB_HOST}"
@@ -191,3 +192,4 @@ export OSU_B_HASH
 export NO_CONVERTS
 export RANKED_ONLY
 export THREADS
+export SCHEMA=1
