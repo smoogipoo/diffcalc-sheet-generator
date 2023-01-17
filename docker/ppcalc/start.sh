@@ -23,7 +23,7 @@ function process_scores() {
     dotnet run \
         -c:Release \
         --project osu.Server.Queues.ScorePump \
-        batch \
+        performance \
         scores \
         all \
         --ruleset ${RULESET_ID} \
@@ -55,7 +55,7 @@ function process_totals() {
         -c:Release \
         --project osu.Server.Queues.ScorePump \
         -- \
-        batch \
+        performance \
         user-totals \
         all \
         --ruleset ${RULESET_ID} \
