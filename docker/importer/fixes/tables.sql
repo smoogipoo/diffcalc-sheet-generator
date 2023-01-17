@@ -16,7 +16,7 @@ CREATE TABLE `solo_scores` (
 
 CREATE TABLE `solo_scores_legacy_id_map` (
   `ruleset_id` smallint unsigned NOT NULL,
-  `old_score_id` int unsigned NOT NULL,
+  `old_score_id` bigint unsigned NOT NULL,
   `score_id` bigint NOT NULL,
   PRIMARY KEY (`ruleset_id`,`old_score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
