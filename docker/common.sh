@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -u
+
 : ${DB_HOST:="db"}
 : ${DB_PORT:=3306}
 : ${DB_USER:="root"}
