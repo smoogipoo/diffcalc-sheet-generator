@@ -20,6 +20,7 @@ function process_scores() {
     ./UseLocalOsu.sh
 
     DB_NAME=$db_name \
+    REALTIME_DIFFICULTY="0" \
     dotnet run \
         -c:Release \
         --project osu.Server.Queues.ScorePump \
@@ -51,6 +52,7 @@ function process_totals() {
 
     DB_NAME=$db_name \
     PROCESS_USER_TOTALS="1" \
+    REALTIME_DIFFICULTY="0" \
     dotnet run \
         -c:Release \
         --project osu.Server.Queues.ScorePump \
