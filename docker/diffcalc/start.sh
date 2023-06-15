@@ -46,8 +46,8 @@ DIFFCALC_B_DIR="${WORKDIR_B}/osu-difficulty-calculator"
 echo "[DIFFCALC_A] => ${DIFFCALC_A_DIR}"
 echo "[DIFFCALC_B] => ${DIFFCALC_B_DIR}"
 
-clone_repo "https://github.com/ppy/osu-difficulty-calculator" "${DIFFCALC_A_DIR}"
-clone_repo "https://github.com/ppy/osu-difficulty-calculator" "${DIFFCALC_B_DIR}"
+clone_repo "${DIFFICULTY_CALCULATOR_A}" "${DIFFCALC_A_DIR}"
+clone_repo "${DIFFICULTY_CALCULATOR_B}" "${DIFFCALC_B_DIR}"
 
 TIMEFORMAT="Completed in %3lR"
 
