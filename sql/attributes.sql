@@ -1,0 +1,15 @@
+REPLACE INTO `osu_difficulty_attribs` (`attrib_id`, `name`) VALUES
+    (1, 'Aim'),
+    (3, 'Speed'),
+    (5, 'OD'),
+    (7, 'AR'),
+    (9, 'Max combo'),
+    (11, 'Strain'),
+    (13, 'Hit window 300'),
+    (15, 'Score multiplier'),
+    (17, 'Flashlight'),
+    (19, 'Slider factor'),
+    (21, 'Speed note count'),
+    (23, 'Legacy Accuracy Score'),
+    (25, 'Legacy Combo Score'),
+    (27, 'Legacy Bonus Score Ratio');
