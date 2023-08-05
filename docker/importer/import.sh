@@ -63,8 +63,8 @@ function import_scores() {
         queue \
         import-high-scores \
         -r ${RULESET_ID} \
-        --skip-indexing=true \
-        --exit-on-completion=true
+        --skip-indexing \
+        --exit-on-completion
 
     set_db_step $db_name 1
 }
