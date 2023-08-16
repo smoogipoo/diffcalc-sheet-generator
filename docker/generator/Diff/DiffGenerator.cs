@@ -36,7 +36,7 @@ public class DiffGenerator
             if (Env.RANKED_ONLY)
                 beatmapQuery.AppendLine("AND `b`.`approved` IN (1, 2) ");
 
-            string modComparison = withMods ? "IS NOT NULL " : "IS NULL ";
+            string modComparison = withMods ? "> 1 " : "= 1 ";
             string order = type == DiffType.Gains ? "DESC " : "ASC ";
 
             IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
@@ -67,7 +67,7 @@ public class DiffGenerator
                 + "WHERE `s`.`ruleset_id` = @RulesetId "
                 + beatmapQuery
                 + "     AND ABS(`a`.`pp` - `b`.`pp`) > 0.1 "
-                + $"    AND JSON_EXTRACT(`s`.`data`, \"$.mods[0]\") {modComparison}"
+                + $"    AND JSON_LENGTH(JSON_EXTRACT(`s`.`data`, \"$.mods\")) {modComparison}"
                 + "ORDER BY `b`.`pp` - `a`.`pp` "
                 + order
                 + "LIMIT 10000", new
