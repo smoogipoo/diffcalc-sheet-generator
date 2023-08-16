@@ -23,7 +23,8 @@ function process_scores() {
     REALTIME_DIFFICULTY="0" \
     dotnet run \
         -c:Release \
-        --project osu.Server.Queues.ScorePump \
+        --project osu.Server.Queues.ScoreStatisticsProcessor \
+        -- \
         performance \
         scores \
         all \
@@ -55,7 +56,7 @@ function process_totals() {
     REALTIME_DIFFICULTY="0" \
     dotnet run \
         -c:Release \
-        --project osu.Server.Queues.ScorePump \
+        --project osu.Server.Queues.ScoreStatisticsProcessor \
         -- \
         performance \
         user-totals \

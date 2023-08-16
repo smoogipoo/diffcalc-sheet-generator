@@ -58,7 +58,8 @@ function import_scores() {
 
     DB_NAME=$db_name \
     dotnet run \
-        --project osu.Server.Queues.ScorePump \
+        -c:Release \
+        --project osu.Server.Queues.ScoreStatisticsProcessor \
         -- \
         queue \
         import-high-scores \
