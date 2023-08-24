@@ -23,7 +23,7 @@ CREATE TABLE `solo_scores_legacy_id_map` (
 
 CREATE TABLE `solo_scores_performance` (
   `score_id` bigint unsigned NOT NULL,
-  `pp` double(8,2) DEFAULT NULL,
+  `pp` FLOAT DEFAULT NULL,
   PRIMARY KEY (`score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
