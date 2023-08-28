@@ -50,4 +50,6 @@ await Task.WhenAll(rows);
 for (int i = 0; i < generators.Count; i++)
     await spreadsheet.AddSheet(generators[i], rows[i].Result);
 
+await spreadsheet.Close();
+
 Console.WriteLine($"Spreadsheet generation finished: {spreadsheet.SpreadSheet.SpreadsheetUrl}");

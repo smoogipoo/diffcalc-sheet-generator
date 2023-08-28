@@ -28,7 +28,7 @@ public class DiffSpreadSheet
 
     public async Task AddSheet(IGenerator generator, object[][] rows)
     {
-        Console.WriteLine($"Creating sheet '{generator.Name}'...");
+        Console.WriteLine($"Adding sheet '{generator.Name}'...");
 
         // Create sheet
         BatchUpdateSpreadsheetResponse response = await service.Spreadsheets.BatchUpdate(new BatchUpdateSpreadsheetRequest
@@ -148,8 +148,23 @@ public class DiffSpreadSheet
         }, SpreadSheet.SpreadsheetId, properties.Title);
         request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
         await request.ExecuteAsync();
+    }
 
-        Console.WriteLine($"'{properties.Title}' finished!");
+    public async Task Close()
+    {
+        await service.Spreadsheets.BatchUpdate(new BatchUpdateSpreadsheetRequest
+        {
+            Requests = new List<Request>
+            {
+                new Request
+                {
+                    DeleteSheet = new DeleteSheetRequest
+                    {
+                        SheetId = SpreadSheet.Sheets[0].Properties.SheetId
+                    }
+                }
+            }
+        }, SpreadSheet.SpreadsheetId).ExecuteAsync();
     }
 
     public static async Task<DiffSpreadSheet> Create(string spreadSheetName)
