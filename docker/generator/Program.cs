@@ -1,5 +1,6 @@
 ﻿using Generator;
 using Generator.Diff;
+using Generator.Generators;
 
 DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create(
     $"{Env.RULESET}: "
@@ -11,58 +12,22 @@ DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create(
 Console.WriteLine($"Spreadsheet created: {spreadsheet.SpreadSheet.SpreadsheetUrl}");
 Console.WriteLine("Now generating...");
 
-List<Task> tasks = new List<Task>
+List<IGenerator> generators = new List<IGenerator>
 {
-    new DiffGenerator(true, DiffType.Gains)
-        .QueryPpDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.PpGainsAllSheet, DiffSpreadSheet.MakePpGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap(),
-    new DiffGenerator(true, DiffType.Losses)
-        .QueryPpDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.PpLossesAllSheet, DiffSpreadSheet.MakePpGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap(),
-    new DiffGenerator(false, DiffType.Gains)
-        .QueryPpDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.PpGainsNMSheet, DiffSpreadSheet.MakePpGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap(),
-    new DiffGenerator(false, DiffType.Losses)
-        .QueryPpDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.PpLossesNMSheet, DiffSpreadSheet.MakePpGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap(),
-    new DiffGenerator(true, DiffType.Gains)
-        .QuerySrDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.SrGainsAllSheet, DiffSpreadSheet.MakeSrGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap(),
-    new DiffGenerator(true, DiffType.Losses)
-        .QuerySrDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.SrLossesAllSheet, DiffSpreadSheet.MakeSrGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap(),
-    new DiffGenerator(false, DiffType.Gains)
-        .QuerySrDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.SrGainsNMSheet, DiffSpreadSheet.MakeSrGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap(),
-    new DiffGenerator(false, DiffType.Losses)
-        .QuerySrDiffs()
-        .ContinueWith(
-            async t => await spreadsheet.SetData(spreadsheet.SrLossesNMSheet, DiffSpreadSheet.MakeSrGrid(t.Result)),
-            TaskContinuationOptions.OnlyOnRanToCompletion)
-        .Unwrap()
+    new PerformanceDiffsGenerator(true, Order.Gains),
+    new PerformanceDiffsGenerator(true, Order.Losses),
+    new PerformanceDiffsGenerator(false, Order.Gains),
+    new PerformanceDiffsGenerator(false, Order.Losses),
+    new StarRatingDiffsGenerator(true, Order.Gains),
+    new StarRatingDiffsGenerator(true, Order.Losses),
+    new StarRatingDiffsGenerator(false, Order.Gains),
+    new StarRatingDiffsGenerator(false, Order.Losses),
 };
 
-await Task.WhenAll(tasks);
+List<Task<object[][]>> rows = generators.Select(gen => gen.Query()).ToList();
+await Task.WhenAll(rows);
+
+for (int i = 0; i < generators.Count; i++)
+    await spreadsheet.AddSheet(generators[i], rows[i].Result);
 
 Console.WriteLine($"Spreadsheet generation finished: {spreadsheet.SpreadSheet.SpreadsheetUrl}");
