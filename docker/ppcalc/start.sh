@@ -4,10 +4,10 @@ source ../common.sh
 
 ### Runs the score statistics processor to recalculate all scores.
 ###
-### Usage: process_scores <db_name> <ss_dir>
+### Usage: process_scores <db_name> <processor_dir>
 function process_scores() {
     local db_name=$1
-    local ss_dir=$2
+    local processor_dir=$2
 
     if [[ $(get_db_step ${db_name}) -ge 3 ]]; then
         echo "PP calculations are up to date."
@@ -16,7 +16,7 @@ function process_scores() {
 
     wait_for_step $db_name 2
 
-    cd $ss_dir
+    cd $processor_dir
     ./UseLocalOsu.sh
 
     DB_NAME=$db_name \
@@ -36,10 +36,10 @@ function process_scores() {
 
 ### Runs the score statistics processor to recalculate all user totals.
 ###
-### Usage: process_totals <db_name> <ss_dir>
+### Usage: process_totals <db_name> <processor_dir>
 function process_totals() {
     local db_name=$1
-    local ss_dir=$2
+    local processor_dir=$2
 
     if [[ $(get_db_step ${db_name}) -ge 4 ]]; then
         echo "PP calculations are up to date."
@@ -48,7 +48,7 @@ function process_totals() {
 
     wait_for_step $db_name 3
 
-    cd $ss_dir
+    cd $processor_dir
     ./UseLocalOsu.sh
 
     DB_NAME=$db_name \
