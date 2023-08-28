@@ -2,6 +2,9 @@
 using Generator.Diff;
 using Generator.Generators;
 
+if (Env.GENERATOR_LIST.Length == 0)
+    Console.WriteLine("Nothing to generate (no generators)!");
+
 DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create(
     $"{Env.RULESET}: "
     + $"{Env.DB_A[..7]} (A) vs {Env.DB_B[..7]} (B) "
@@ -10,19 +13,29 @@ DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create(
     + $"ranked-only: {Env.RANKED_ONLY}");
 
 Console.WriteLine($"Spreadsheet created: {spreadsheet.SpreadSheet.SpreadsheetUrl}");
-Console.WriteLine("Now generating...");
+Console.WriteLine($"Now generating (generators: {string.Join(", ", Env.GENERATOR_LIST)})");
 
-List<IGenerator> generators = new List<IGenerator>
+List<IGenerator> generators = new List<IGenerator>();
+
+foreach (string gen in Env.GENERATOR_LIST)
 {
-    new PerformanceDiffsGenerator(true, Order.Gains),
-    new PerformanceDiffsGenerator(true, Order.Losses),
-    new PerformanceDiffsGenerator(false, Order.Gains),
-    new PerformanceDiffsGenerator(false, Order.Losses),
-    new StarRatingDiffsGenerator(true, Order.Gains),
-    new StarRatingDiffsGenerator(true, Order.Losses),
-    new StarRatingDiffsGenerator(false, Order.Gains),
-    new StarRatingDiffsGenerator(false, Order.Losses),
-};
+    switch (gen)
+    {
+        case "pp":
+            generators.Add(new PerformanceDiffsGenerator(true, Order.Gains));
+            generators.Add(new PerformanceDiffsGenerator(true, Order.Losses));
+            generators.Add(new PerformanceDiffsGenerator(false, Order.Gains));
+            generators.Add(new PerformanceDiffsGenerator(false, Order.Losses));
+            break;
+
+        case "sr":
+            generators.Add(new StarRatingDiffsGenerator(true, Order.Gains));
+            generators.Add(new StarRatingDiffsGenerator(true, Order.Losses));
+            generators.Add(new StarRatingDiffsGenerator(false, Order.Gains));
+            generators.Add(new StarRatingDiffsGenerator(false, Order.Losses));
+            break;
+    }
+}
 
 List<Task<object[][]>> rows = generators.Select(gen => gen.Query()).ToList();
 await Task.WhenAll(rows);
