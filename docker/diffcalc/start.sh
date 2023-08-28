@@ -9,12 +9,12 @@ function run_processor() {
     local db_name=$1
     local diffcalc_dir=$2
 
-    if [[ $(get_db_step ${db_name}) -ge 2 ]]; then
+    if [[ $(get_db_step ${db_name}) -ge 1 ]]; then
         echo "SR calculations are up to date."
         return
     fi
 
-    wait_for_step $db_name 1
+    wait_for_step $db_name 0
 
     cd $diffcalc_dir
     ./UseLocalOsu.sh
@@ -36,7 +36,7 @@ function run_processor() {
             --concurrency ${THREADS}
     }
 
-    set_db_step $db_name 2
+    set_db_step $db_name 1
 }
 
 

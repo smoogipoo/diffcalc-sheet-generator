@@ -47,21 +47,31 @@ services:
     ports:
       - "${REDIS_PORT:-6379}:6379"
 
-  importer:
+  # Database setup
+  setup:
     <<: *x-common
-    working_dir: '/app/importer'
+    working_dir: '/app/setup'
     command: [ './import.sh' ]
 
+  # Difficulty calculation
   diffcalc:
     <<: *x-common
     working_dir: '/app/diffcalc'
     command: [ './start.sh' ]
 
+  # Highscore importer
+  importer:
+    <<: *x-common
+    working_dir: '/app/importer'
+    command: [ './start.sh' ]
+
+  # Performance points calculation
   ppcalc:
     <<: *x-common
     working_dir: '/app/ppcalc'
     command: [ './start.sh' ]
 
+  # Spreadsheet generator
   generator:
     <<: *x-common
     working_dir: '/app/generator'
