@@ -21,7 +21,7 @@ namespace Generator.Generators
             this.withMods = withMods;
             this.order = order;
 
-            StringBuilder sb = new StringBuilder("SR");
+            StringBuilder sb = new StringBuilder("PP");
 
             sb.Append($" {order.ToString()}");
             sb.Append(withMods ? " (All)" : " (NM)");
@@ -121,7 +121,7 @@ namespace Generator.Generators
                     });
                 }
 
-                Console.WriteLine($"Finished processing scores (mods: {withMods}, type: {order}).");
+                Console.WriteLine($"Finished querying PP diffs (mods: {withMods}, type: {order})...");
 
                 return rows.ToArray();
             }
