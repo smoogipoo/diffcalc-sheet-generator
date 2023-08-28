@@ -34,6 +34,13 @@ foreach (string gen in Env.GENERATOR_LIST)
             generators.Add(new StarRatingDiffsGenerator(false, Order.Gains));
             generators.Add(new StarRatingDiffsGenerator(false, Order.Losses));
             break;
+
+        case "score":
+            generators.Add(new ScoreDiffsGenerator(true, Order.Gains));
+            generators.Add(new ScoreDiffsGenerator(true, Order.Losses));
+            generators.Add(new ScoreDiffsGenerator(false, Order.Gains));
+            generators.Add(new ScoreDiffsGenerator(false, Order.Losses));
+            break;
     }
 }
 
