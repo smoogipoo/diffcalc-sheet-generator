@@ -73,6 +73,7 @@ namespace Generator.Generators
                     + "     ON `b`.`id` = `mb`.`score_id` "
                     + "WHERE JSON_EXTRACT(`a`.`data`, '$.total_score') != JSON_EXTRACT(`b`.`data`, '$.total_score') "
                     + "ORDER BY JSON_EXTRACT(`b`.`data`, '$.total_score') - JSON_EXTRACT(`a`.`data`, '$.total_score') "
+                    + (order == Order.Gains ? "DESC " : "ASC ")
                     + $"LIMIT {max_rows}", new
                     {
                         RulesetId = Env.RULESET_ID
