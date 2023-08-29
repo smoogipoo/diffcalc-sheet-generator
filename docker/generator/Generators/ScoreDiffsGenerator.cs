@@ -56,7 +56,7 @@ namespace Generator.Generators
                 IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
                     "SELECT "
                     + $"     `h`.`score_id` AS `{nameof(ScoreDiff.highscore_id)}`, "
-                    + $"     `a`.`score_id` AS `{nameof(ScoreDiff.score_id)}`, "
+                    + $"     `a`.`id` AS `{nameof(ScoreDiff.score_id)}`, "
                     + $"     `a`.`beatmap_id` AS `{nameof(ScoreDiff.beatmap_id)}`, "
                     + $"     JSON_EXTRACT(`a`.`data`, '$.total_score') AS '{nameof(ScoreDiff.a_score)}', "
                     + $"     JSON_EXTRACT(`b`.`data`, '$.total_score') AS '{nameof(ScoreDiff.b_score)}' "
