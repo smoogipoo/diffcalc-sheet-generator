@@ -480,4 +480,4 @@ $RECYCLE.BIN/
 google-credentials.json
 
 *.osu
-*.sql
+sql/**/*.sql
