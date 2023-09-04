@@ -78,9 +78,7 @@ function clone_repo() {
     fi
 }
 
-### Retrieves a unique hash for the given directory.
-###
-### Remarks: This is implemented via git rev-parse.
+### Uses git rev-parse to generate a unique hash for the given repository directory.
 ###
 ### Usage: get_hash <target_dir>
 function get_hash() {
@@ -95,8 +93,8 @@ function get_hash() {
 ###
 ### -1 => Not initialised.
 ###  0 => DB imported.
-###  1 => Highscores imported
-###  2 => Difficulty calculation complete
+###  1 => Difficulty calculation complete
+###  2 => Highscores imported
 ###  3 => Score PP calculation complete
 ###  4 => User PP calculation complete
 ###
