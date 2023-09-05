@@ -33,7 +33,7 @@ function import_scores() {
         -- \
         queue \
         import-high-scores \
-        -r ${RULESET_ID} \
+        --ruleset-id ${RULESET_ID} \
         --skip-indexing \
         --exit-on-completion
 
