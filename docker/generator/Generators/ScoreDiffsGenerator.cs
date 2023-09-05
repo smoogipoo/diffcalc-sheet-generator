@@ -72,6 +72,7 @@ namespace Generator.Generators
                     + $"JOIN `{Env.DB_B}`.`solo_scores` `b` "
                     + "     ON `b`.`id` = `mb`.`score_id` "
                     + "WHERE JSON_EXTRACT(`a`.`data`, '$.total_score') != JSON_EXTRACT(`b`.`data`, '$.total_score') "
+                    + $"    AND `h`.`enabled_mods` {(withMods ? ">= 0 " : "= 0 ")} "
                     + "ORDER BY JSON_EXTRACT(`b`.`data`, '$.total_score') - JSON_EXTRACT(`a`.`data`, '$.total_score') "
                     + (order == Order.Gains ? "DESC " : "ASC ")
                     + $"LIMIT {max_rows}", new
