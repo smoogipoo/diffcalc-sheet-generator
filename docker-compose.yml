@@ -34,7 +34,7 @@ services:
       - database:/var/lib/mysql
       - ./db:/etc/mysql/conf.d
     ports:
-      - "${DB_PORT:-3306}:3306"
+      - "${DB_PORT:-0}:3306"
     command: ['--innodb-buffer-pool-size=${INNODB_BUFFER_SIZE}']
 
   redis:
@@ -45,7 +45,7 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_PORT:-0}:6379"
 
   # Database setup
   setup:
