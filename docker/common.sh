@@ -135,8 +135,9 @@ function wait_for_step() {
     local db_name=$1
     local num=$2
 
+    echo "Waiting for database ${db_name} to reach step ${num}. Currently at step $(get_db_step ${db_name})."
+
     while [[ $(get_db_step ${db_name}) != ${num} ]]; do
-        echo "Waiting for database ${db_name} to reach step ${num}. Currently at step $(get_db_step ${db_name})."
         sleep 5
     done
 }
