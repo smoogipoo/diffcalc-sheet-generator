@@ -1,4 +1,8 @@
-FROM ubuntu:20.04
+###
+### Base image
+###
+
+FROM ubuntu:20.04 AS base
 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -26,3 +30,15 @@ RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
     dotnet-sdk-6.0
+
+###
+### Generator image
+###
+
+FROM base AS generator
+
+WORKDIR /workdir
+COPY . ./
+
+WORKDIR /workdir/generator
+RUN dotnet publish -c Release -o /out

@@ -1,5 +1,9 @@
 version: '3.8'
 
+x-build-context: &x-build-context
+  context: ./docker
+  dockerfile: Dockerfile
+
 x-common: &x-common
   depends_on:
     db:
@@ -15,8 +19,8 @@ x-common: &x-common
     - ./beatmaps:/beatmaps
     - ./sql:/sql
   build:
-    context: ./docker
-    dockerfile: Dockerfile
+    <<: *x-build-context
+    target: base
 
 services:
   db:
@@ -74,6 +78,9 @@ services:
   # Spreadsheet generator
   generator:
     <<: *x-common
+    build:
+      <<: *x-build-context
+      target: generator
     working_dir: '/app/generator'
     volumes:
       - ./docker:/app
