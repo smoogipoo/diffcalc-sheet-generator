@@ -64,7 +64,7 @@ namespace Generator.Generators
                     "SELECT "
                     + $"     `h`.`score_id` AS `{nameof(ScoreDiff.highscore_id)}`, "
                     + $"     `a`.`score_id` AS `{nameof(ScoreDiff.score_id)}`, "
-                    + $"     `b`.`beatmap_id` AS `{nameof(ScoreDiff.beatmap_id)}`, "
+                    + $"     `bm`.`beatmap_id` AS `{nameof(ScoreDiff.beatmap_id)}`, "
                     + $"     `a`.`pp` AS `{nameof(ScoreDiff.a_pp)}`, "
                     + $"     `b`.`pp` AS `{nameof(ScoreDiff.b_pp)}` "
                     // Select as highscores and map for each database... These tables are only used for solo score lookups.
@@ -83,8 +83,8 @@ namespace Generator.Generators
                     + $"JOIN `{Env.DB_A}`.`{SoloScore.TABLE_NAME}` `s` "
                     + "     ON `s`.`id` = `a`.`score_id` "
                     // And the beatmap for additional filtering.
-                    + $"JOIN `{Env.DB_A}`.`{Beatmap.TABLE_NAME}` `b` "
-                    + "     ON `b`.`beatmap_id` = `s`.`beatmap_id` "
+                    + $"JOIN `{Env.DB_A}`.`{Beatmap.TABLE_NAME}` `bm` "
+                    + "     ON `bm`.`beatmap_id` = `s`.`beatmap_id` "
                     + "WHERE `s`.`ruleset_id` = @RulesetId "
                     + beatmapQuery
                     + "     AND ABS(`a`.`pp` - `b`.`pp`) > 0.1 "
