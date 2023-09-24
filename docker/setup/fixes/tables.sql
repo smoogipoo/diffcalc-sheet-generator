@@ -76,3 +76,5 @@ CREATE TABLE `osu_user_month_playcount` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=COMPRESSED;
 
 DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
+
+ALTER TABLE osu_beatmaps ADD COLUMN max_combo MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER difficultyrating;
