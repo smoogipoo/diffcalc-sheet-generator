@@ -56,9 +56,9 @@ namespace Generator.Generators
                 StringBuilder beatmapQuery = new StringBuilder();
 
                 if (Env.NO_CONVERTS)
-                    beatmapQuery.AppendLine("AND `b`.`playmode` = @RulesetId ");
+                    beatmapQuery.AppendLine("AND `bm`.`playmode` = @RulesetId ");
                 if (Env.RANKED_ONLY)
-                    beatmapQuery.AppendLine("AND `b`.`approved` IN (1, 2) ");
+                    beatmapQuery.AppendLine("AND `bm`.`approved` IN (1, 2) ");
 
                 IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
                     "SELECT "

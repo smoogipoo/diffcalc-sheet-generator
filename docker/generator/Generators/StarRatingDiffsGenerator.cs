@@ -54,9 +54,9 @@ namespace Generator.Generators
                 StringBuilder beatmapQuery = new StringBuilder();
 
                 if (Env.NO_CONVERTS)
-                    beatmapQuery.AppendLine("AND `m`.`playmode` = @RulesetId ");
+                    beatmapQuery.AppendLine("AND `bm`.`playmode` = @RulesetId ");
                 if (Env.RANKED_ONLY)
-                    beatmapQuery.AppendLine("AND `m`.`approved` IN (1, 2) ");
+                    beatmapQuery.AppendLine("AND `bm`.`approved` IN (1, 2) ");
 
                 IEnumerable<BeatmapDiff> diffs = await db.QueryAsync<BeatmapDiff>(
                     "SELECT "
@@ -71,8 +71,8 @@ namespace Generator.Generators
                     + "     AND `a`.`mods` = `b`.`mods` "
                     + "     AND `a`.`mode` = `b`.`mode` "
                     // And the beatmap for additional filtering.
-                    + $"JOIN `{Env.DB_A}`.`{Beatmap.TABLE_NAME}` `m` "
-                    + "     ON `m`.`beatmap_id` = `a`.`beatmap_id` "
+                    + $"JOIN `{Env.DB_A}`.`{Beatmap.TABLE_NAME}` `bm` "
+                    + "     ON `bm`.`beatmap_id` = `a`.`beatmap_id` "
                     + "WHERE `a`.`mode` = @RulesetId "
                     + beatmapQuery
                     + "     AND ABS(`a`.`diff_unified` - `b`.`diff_unified`) > 0.1 "
