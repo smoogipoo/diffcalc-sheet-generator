@@ -4,12 +4,15 @@ x-build-context: &x-build-context
   context: ./docker
   dockerfile: Dockerfile
 
+x-common-depends: &x-common-depends
+  db:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+
 x-common: &x-common
   depends_on:
-    db:
-      condition: service_healthy
-    redis:
-      condition: service_healthy
+    <<: *x-common-depends
   env_file:
     - .env
   environment:
@@ -81,6 +84,17 @@ services:
     build:
       <<: *x-build-context
       target: generator
+    depends_on:
+      <<: *x-common-depends
+      # To support running `docker-compose up generator`...
+      setup:
+        condition: service_started
+      diffcalc:
+        condition: service_started
+      importer:
+        condition: service_started
+      ppcalc:
+        condition: service_started
     working_dir: '/app/generator'
     volumes:
       - ./docker:/app
