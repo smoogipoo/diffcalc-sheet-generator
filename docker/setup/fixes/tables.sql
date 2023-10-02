@@ -1,4 +1,4 @@
-CREATE TABLE `solo_scores` (
+CREATE TABLE IF NOT EXISTS `solo_scores` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL,
   `beatmap_id` mediumint unsigned NOT NULL,
@@ -14,27 +14,27 @@ CREATE TABLE `solo_scores` (
   KEY `user_ruleset_id_index` (`user_id`,`ruleset_id`,`id` DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED;
 
-CREATE TABLE `solo_scores_legacy_id_map` (
+CREATE TABLE IF NOT EXISTS `solo_scores_legacy_id_map` (
   `ruleset_id` smallint unsigned NOT NULL,
   `old_score_id` bigint unsigned NOT NULL,
   `score_id` bigint NOT NULL,
   PRIMARY KEY (`ruleset_id`,`old_score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `solo_scores_performance` (
+CREATE TABLE IF NOT EXISTS `solo_scores_performance` (
   `score_id` bigint unsigned NOT NULL,
   `pp` FLOAT DEFAULT NULL,
   PRIMARY KEY (`score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `solo_scores_process_history` (
+CREATE TABLE IF NOT EXISTS `solo_scores_process_history` (
   `score_id` bigint NOT NULL,
   `processed_version` tinyint NOT NULL,
   `processed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `score_process_queue` (
+CREATE TABLE IF NOT EXISTS `score_process_queue` (
   `queue_id` int unsigned NOT NULL AUTO_INCREMENT,
   `score_id` bigint unsigned NOT NULL,
   `mode` tinyint unsigned NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `score_process_queue` (
   KEY `temp_pp_processor` (`score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `osu_builds` (
+CREATE TABLE IF NOT EXISTS `osu_builds` (
   `build_id` mediumint unsigned NOT NULL AUTO_INCREMENT,
   `version` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `hash` binary(16) DEFAULT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE `osu_builds` (
   KEY `osu_builds_allow_performance_index` (`allow_performance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `osu_user_month_playcount` (
+CREATE TABLE IF NOT EXISTS `osu_user_month_playcount` (
   `user_id` int unsigned NOT NULL DEFAULT '0',
   `year_month` char(4) NOT NULL,
   `playcount` smallint unsigned NOT NULL,
