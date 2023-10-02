@@ -78,3 +78,12 @@ CREATE TABLE `osu_user_month_playcount` (
 DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
 
 ALTER TABLE osu_beatmaps ADD COLUMN max_combo MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 AFTER difficultyrating;
+
+CREATE TABLE IF NOT EXISTS `osu_beatmap_scoring_attribs` (
+  `beatmap_id` mediumint unsigned NOT NULL,
+  `mode` tinyint unsigned NOT NULL,
+  `legacy_accuracy_score` int NOT NULL DEFAULT 0,
+  `legacy_combo_score` bigint NOT NULL DEFAULT 0,
+  `legacy_bonus_score_ratio` float NOT NULL DEFAULT 0,
+  PRIMARY KEY (`beatmap_id`, `mode`)
+);
