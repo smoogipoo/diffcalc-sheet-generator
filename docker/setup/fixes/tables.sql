@@ -75,8 +75,6 @@ CREATE TABLE IF NOT EXISTS `osu_user_month_playcount` (
   PRIMARY KEY (`user_id`,`year_month`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=COMPRESSED;
 
-DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
-
 CREATE TABLE IF NOT EXISTS `osu_beatmap_scoring_attribs` (
   `beatmap_id` mediumint unsigned NOT NULL,
   `mode` tinyint unsigned NOT NULL,
@@ -85,3 +83,5 @@ CREATE TABLE IF NOT EXISTS `osu_beatmap_scoring_attribs` (
   `legacy_bonus_score_ratio` float NOT NULL DEFAULT 0,
   PRIMARY KEY (`beatmap_id`, `mode`)
 );
+
+DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
