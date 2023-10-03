@@ -6,7 +6,7 @@ set -u
 : ${DB_HOST:="db"}
 : ${DB_PORT:=3306}
 : ${DB_USER:="root"}
-: ${MAX_DATABASE_SIZE:=-1}
+: ${MAX_DATABASE_SIZE:=0}
 
 export DB_HOST
 export DB_PORT
