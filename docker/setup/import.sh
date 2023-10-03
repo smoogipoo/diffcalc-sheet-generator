@@ -2,11 +2,40 @@
 
 source ../common.sh
 
+### Checks that there's enough space for the database.
+###
+### Usage: ensure_space_available
+function ensure_space_available() {
+    if [[ ${MAX_DATABASE_SIZE} -lt 0 ]]; then
+        return
+    fi
+
+    if [[ $(get_db_size) -lt ${MAX_DATABASE_SIZE} ]]; then
+        return
+    fi
+
+    echo "Database has exceeded the maximum allowable size (db: $(get_db_size)GB, max: ${MAX_DATABASE_SIZE}GB). Purging oldest databases..."
+
+    while [[ $(get_db_size) -gt ${MAX_DATABASE_SIZE} ]]; do
+        local oldest=$(mysql "${MYSQL_ARGS[@]}" -e "SELECT TABLE_SCHEMA FROM information_schema.TABLES WHERE TABLE_SCHEMA NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys', '${OSU_A_HASH}', '${OSU_B_HASH}') ORDER BY CREATE_TIME LIMIT 1");
+
+        if [[ -z "${oldest}" ]]; then
+            echo "No more databases left to drop. Database size will exceed the maximum allowable size. Increase MAX_DATABASE_SIZE to prevent this warning."
+            return
+        fi
+
+        echo "Purging database '${oldest}'..."
+        echo "DROP DATABASE ${oldest}" | mysql "${MYSQL_ARGS[@]}"
+    done
+}
+
 ### Creates a database and ensures it's populated for the given ruleset.
 ###
 ### Usage: setup_database <db_name>
 function setup_database() {
     local db_name=$1
+
+    ensure_space_available
 
     mysql "${MYSQL_ARGS[@]}" -e "CREATE DATABASE IF NOT EXISTS \`${db_name}\`"
 

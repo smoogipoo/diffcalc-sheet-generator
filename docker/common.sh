@@ -6,6 +6,7 @@ set -u
 : ${DB_HOST:="db"}
 : ${DB_PORT:=3306}
 : ${DB_USER:="root"}
+: ${MAX_DATABASE_SIZE:=-1}
 
 export DB_HOST
 export DB_PORT
@@ -142,6 +143,10 @@ function wait_for_step() {
     done
 }
 
+function get_db_size() {
+    mysql "${MYSQL_ARGS[@]}" -e "SELECT CEILING(SUM(DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024 / 1024) FROM information_schema.TABLES"
+}
+
 case "$RULESET" in
     "osu")
         RULESET_ID=0
@@ -193,3 +198,4 @@ export RANKED_ONLY
 export GENERATORS
 export THREADS
 export SCHEMA=1
+export MAX_DATABASE_SIZE
