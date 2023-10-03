@@ -60,6 +60,8 @@ namespace Generator.Generators
                 if (Env.RANKED_ONLY)
                     beatmapQuery.AppendLine("AND `bm`.`approved` IN (1, 2) ");
 
+                string comparer = order == Order.Gains ? "> 0.1" : "< -0.1";
+
                 IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
                     "SELECT "
                     + $"     `h`.`score_id` AS `{nameof(ScoreDiff.highscore_id)}`, "
@@ -87,7 +89,7 @@ namespace Generator.Generators
                     + "     ON `bm`.`beatmap_id` = `s`.`beatmap_id` "
                     + "WHERE `s`.`ruleset_id` = @RulesetId "
                     + beatmapQuery
-                    + "     AND ABS(`a`.`pp` - `b`.`pp`) > 0.1 "
+                    + $"    AND `b`.`pp` - `a`.`pp` {comparer} "
                     + $"    AND JSON_LENGTH(JSON_EXTRACT(`s`.`data`, \"$.mods\")) {(withMods ? "> 1 " : "= 1 ")}"
                     + "ORDER BY `b`.`pp` - `a`.`pp` "
                     + (order == Order.Gains ? "DESC " : "ASC ")

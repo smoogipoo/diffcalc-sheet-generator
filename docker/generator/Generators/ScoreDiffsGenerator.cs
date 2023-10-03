@@ -53,6 +53,8 @@ namespace Generator.Generators
             {
                 var dbInfo = LegacyDatabaseHelper.GetRulesetSpecifics(Env.RULESET_ID);
 
+                string comparer = order == Order.Gains ? "> 0" : "< 0";
+
                 IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
                     "SELECT "
                     + $"     `h`.`score_id` AS `{nameof(ScoreDiff.highscore_id)}`, "
@@ -71,7 +73,7 @@ namespace Generator.Generators
                     + "     ON `a`.`id` = `ma`.`score_id` "
                     + $"JOIN `{Env.DB_B}`.`solo_scores` `b` "
                     + "     ON `b`.`id` = `mb`.`score_id` "
-                    + "WHERE JSON_EXTRACT(`a`.`data`, '$.total_score') != JSON_EXTRACT(`b`.`data`, '$.total_score') "
+                    + $"WHERE JSON_EXTRACT(`b`.`data`, '$.total_score') - JSON_EXTRACT(`a`.`data`, '$.total_score') {comparer} "
                     + $"    AND `h`.`enabled_mods` {(withMods ? ">= 0 " : "= 0 ")} "
                     + "ORDER BY JSON_EXTRACT(`b`.`data`, '$.total_score') - JSON_EXTRACT(`a`.`data`, '$.total_score') "
                     + (order == Order.Gains ? "DESC " : "ASC ")
