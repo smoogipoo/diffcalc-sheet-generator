@@ -10,7 +10,7 @@ function run_processor() {
     local diffcalc_dir=$2
 
     if [[ $(get_db_step ${db_name}) -ge 1 ]]; then
-        echo "SR calculations are up to date."
+        echo "SR values are up to date."
         return
     fi
 

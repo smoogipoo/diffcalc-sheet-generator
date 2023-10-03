@@ -10,7 +10,7 @@ function process_scores() {
     local processor_dir=$2
 
     if [[ $(get_db_step ${db_name}) -ge 3 ]]; then
-        echo "PP calculations are up to date."
+        echo "Score PP values are up to date."
         return
     fi
 
@@ -42,7 +42,7 @@ function process_totals() {
     local processor_dir=$2
 
     if [[ $(get_db_step ${db_name}) -ge 4 ]]; then
-        echo "PP calculations are up to date."
+        echo "User PP values are up to date."
         return
     fi
 
