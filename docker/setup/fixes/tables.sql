@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS `osu_beatmap_scoring_attribs` (
   `legacy_accuracy_score` int NOT NULL DEFAULT 0,
   `legacy_combo_score` bigint NOT NULL DEFAULT 0,
   `legacy_bonus_score_ratio` float NOT NULL DEFAULT 0,
+  `legacy_bonus_score` int NOT NULL DEFAULT 0,
+  `max_combo` int NOT NULL DEFAULT 0,
   PRIMARY KEY (`beatmap_id`, `mode`)
 );
 
