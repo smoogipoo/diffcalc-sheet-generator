@@ -35,7 +35,7 @@ function import_scores() {
         import-high-scores \
         --ruleset-id ${RULESET_ID} \
         --skip-indexing \
-        --exit-on-completion
+        --start-id=0
 
     set_db_step $db_name 2
 }
