@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `score_process_queue` (
   `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `status` tinyint(1) NOT NULL DEFAULT '0',
+  `is_deletion` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`queue_id`,`start_time`),
   KEY `status` (`status`),
   KEY `lookup_v3` (`mode`,`status`,`queue_id`),
