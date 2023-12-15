@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `solo_scores` (
   `data` json NOT NULL,
   `has_replay` tinyint(1) NOT NULL DEFAULT '0',
   `preserve` tinyint(1) NOT NULL DEFAULT '0',
+  `ranked` tinyint(1)  NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
