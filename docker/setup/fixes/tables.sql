@@ -7,12 +7,11 @@ CREATE TABLE IF NOT EXISTS `solo_scores` (
   `has_replay` tinyint(1) NOT NULL DEFAULT '0',
   `preserve` tinyint(1) NOT NULL DEFAULT '0',
   `ranked` tinyint(1)  NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `solo_scores_preserve_index` (`preserve`),
-  KEY `solo_scores_beatmap_id_index` (`beatmap_id`),
-  KEY `user_ruleset_id_index` (`user_id`,`ruleset_id`,`id` DESC)
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `unix_updated_at` int unsigned NOT NULL DEFAULT (UNIX_TIMESTAMP()),
+  PRIMARY KEY (`id`, `preserve`, `unix_updated_at`),
+  KEY `user_ruleset_index` (`user_id`, `ruleset_id`),
+  KEY `beatmap_user_index` (`beatmap_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE IF NOT EXISTS `solo_scores_legacy_id_map` (
