@@ -89,6 +89,11 @@ CREATE TABLE IF NOT EXISTS `osu_beatmap_scoring_attribs` (
 
 DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
 
-# May be temporarily required as components are updated to the new table terminology.
-# See https://github.com/ppy/osu-infrastructure/issues/24
+-- May be temporarily required as components are updated to the new table terminology. See: https://github.com/ppy/osu-infrastructure/issues/24
 CREATE VIEW scores AS SELECT * FROM solo_scores;
+CREATE VIEW score_legacy_id_map AS SELECT * FROM solo_scores_legacy_id_map;
+CREATE VIEW score_performance AS SELECT * FROM solo_scores_performance;
+CREATE VIEW score_process_history AS SELECT * FROM solo_scores_process_history;
+-- These tables aren't created above, yet.
+-- CREATE VIEW score_tokens AS SELECT * FROM solo_score_tokens;
+-- CREATE VIEW multiplayer_playlist_item_scores AS SELECT * FROM multiplayer_score_links;
