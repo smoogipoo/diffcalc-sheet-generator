@@ -1,3 +1,5 @@
+ALTER INSTANCE DISABLE INNODB REDO_LOG;
+
 CREATE TABLE IF NOT EXISTS `solo_scores` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL,
