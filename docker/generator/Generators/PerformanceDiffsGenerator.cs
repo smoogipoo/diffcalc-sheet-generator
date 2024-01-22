@@ -65,32 +65,26 @@ namespace Generator.Generators
                 IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
                     "SELECT "
                     + $"     `h`.`score_id` AS `{nameof(ScoreDiff.highscore_id)}`, "
-                    + $"     `a`.`score_id` AS `{nameof(ScoreDiff.score_id)}`, "
+                    + $"     `a`.`id` AS `{nameof(ScoreDiff.score_id)}`, "
                     + $"     `bm`.`beatmap_id` AS `{nameof(ScoreDiff.beatmap_id)}`, "
                     + $"     `a`.`pp` AS `{nameof(ScoreDiff.a_pp)}`, "
                     + $"     `b`.`pp` AS `{nameof(ScoreDiff.b_pp)}` "
-                    // Select as highscores and map for each database... These tables are only used for solo score lookups.
+                    // Select as highscores and map for each database...
                     // Todo: This should go away once data.ppy.sh provides solo_scores.
                     + $"FROM `{Env.DB_A}`.`{dbInfo.HighScoreTable}` `h` "
-                    + $"JOIN `{Env.DB_A}`.`{SoloScoreLegacyIDMap.TABLE_NAME}` `ma` "
-                    + "     ON `ma`.`old_score_id` = `h`.`score_id` "
-                    + $"JOIN `{Env.DB_B}`.`{SoloScoreLegacyIDMap.TABLE_NAME}` `mb` "
-                    + "     ON `mb`.`old_score_id` = `h`.`score_id` "
-                    // Select the solo score performance from each database...
-                    + $"JOIN `{Env.DB_A}`.`{SoloScorePerformance.TABLE_NAME}` `a` "
-                    + "     ON `a`.`score_id` = `ma`.`score_id` "
-                    + $"JOIN `{Env.DB_B}`.`{SoloScorePerformance.TABLE_NAME}` `b` "
-                    + "     ON `b`.`score_id` = `mb`.`score_id` "
-                    // And also include the solo score itself for filtering.
-                    + $"JOIN `{Env.DB_A}`.`{SoloScore.TABLE_NAME}` `s` "
-                    + "     ON `s`.`id` = `a`.`score_id` "
+                    // Select the solo score from each database...
+                    + $"JOIN `{Env.DB_A}`.`{SoloScore.TABLE_NAME}` `a` "
+                    + "     ON `a`.`legacy_score_id` = `h`.`score_id` "
+                    + "     AND `a`.`ruleset_id` = @RulesetId "
+                    + $"JOIN `{Env.DB_B}`.`{SoloScore.TABLE_NAME}` `b` "
+                    + "     ON `b`.`legacy_score_id` = `h`.`score_id` "
+                    + "     AND `b`.`ruleset_id` = @RulesetId "
                     // And the beatmap for additional filtering.
                     + $"JOIN `{Env.DB_A}`.`{Beatmap.TABLE_NAME}` `bm` "
-                    + "     ON `bm`.`beatmap_id` = `s`.`beatmap_id` "
-                    + "WHERE `s`.`ruleset_id` = @RulesetId "
+                    + "     ON `bm`.`beatmap_id` = `a`.`beatmap_id` "
                     + beatmapQuery
                     + $"    AND `b`.`pp` - `a`.`pp` {comparer} "
-                    + $"    AND JSON_LENGTH(JSON_EXTRACT(`s`.`data`, \"$.mods\")) {(withMods ? "> 1 " : "= 1 ")}"
+                    + $"    AND JSON_LENGTH(JSON_EXTRACT(`a`.`data`, \"$.mods\")) {(withMods ? "> 1 " : "= 1 ")}"
                     + "ORDER BY `b`.`pp` - `a`.`pp` "
                     + (order == Order.Gains ? "DESC " : "ASC ")
                     + $"LIMIT {max_rows}", new
@@ -114,7 +108,7 @@ namespace Generator.Generators
                     {
                         d.highscore_id,
                         beatmapTask.beatmap_id,
-                        getModString(scoreTask.ScoreInfo.mods.ToArray()),
+                        getModString(scoreTask.ScoreData.Mods.ToArray()),
                         beatmapTask.filename,
                         d.a_pp,
                         d.b_pp,
