@@ -3,17 +3,28 @@ ALTER INSTANCE DISABLE INNODB REDO_LOG;
 CREATE TABLE IF NOT EXISTS `solo_scores` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL,
-  `beatmap_id` mediumint unsigned NOT NULL,
   `ruleset_id` smallint unsigned NOT NULL,
-  `data` json NOT NULL,
+  `beatmap_id` mediumint unsigned NOT NULL,
   `has_replay` tinyint(1) NOT NULL DEFAULT '0',
   `preserve` tinyint(1) NOT NULL DEFAULT '0',
-  `ranked` tinyint(1)  NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `unix_updated_at` int unsigned NOT NULL DEFAULT (UNIX_TIMESTAMP()),
-  PRIMARY KEY (`id`, `preserve`, `unix_updated_at`),
-  KEY `user_ruleset_index` (`user_id`, `ruleset_id`),
-  KEY `beatmap_user_index` (`beatmap_id`, `user_id`)
+  `ranked` tinyint(1) NOT NULL DEFAULT '1',
+  `rank` char(2) NOT NULL DEFAULT '',
+  `passed` tinyint NOT NULL DEFAULT '0',
+  `accuracy` float unsigned NOT NULL DEFAULT '0',
+  `max_combo` int unsigned NOT NULL DEFAULT '0',
+  `total_score` int unsigned NOT NULL DEFAULT '0',
+  `data` json NOT NULL,
+  `pp` float unsigned DEFAULT NULL,
+  `legacy_score_id` bigint unsigned DEFAULT NULL,
+  `legacy_total_score` int unsigned DEFAULT NULL,
+  `started_at` timestamp NULL DEFAULT NULL,
+  `ended_at` timestamp NOT NULL,
+  `unix_updated_at` int unsigned NOT NULL DEFAULT (unix_timestamp()),
+  `build_id` smallint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`,`preserve`,`unix_updated_at`),
+  KEY `user_ruleset_index` (`user_id`,`ruleset_id`),
+  KEY `beatmap_user_index` (`beatmap_id`,`user_id`),
+  KEY `legacy_score_lookup` (`ruleset_id`,`legacy_score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE IF NOT EXISTS `solo_scores_legacy_id_map` (
