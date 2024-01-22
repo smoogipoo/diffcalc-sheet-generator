@@ -27,19 +27,6 @@ CREATE TABLE IF NOT EXISTS `solo_scores` (
   KEY `legacy_score_lookup` (`ruleset_id`,`legacy_score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPRESSED;
 
-CREATE TABLE IF NOT EXISTS `solo_scores_legacy_id_map` (
-  `ruleset_id` smallint unsigned NOT NULL,
-  `old_score_id` bigint unsigned NOT NULL,
-  `score_id` bigint NOT NULL,
-  PRIMARY KEY (`ruleset_id`,`old_score_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS `solo_scores_performance` (
-  `score_id` bigint unsigned NOT NULL,
-  `pp` FLOAT DEFAULT NULL,
-  PRIMARY KEY (`score_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE IF NOT EXISTS `solo_scores_process_history` (
   `score_id` bigint NOT NULL,
   `processed_version` tinyint NOT NULL,
@@ -104,8 +91,6 @@ DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
 
 -- May be temporarily required as components are updated to the new table terminology. See: https://github.com/ppy/osu-infrastructure/issues/24
 CREATE VIEW scores AS SELECT * FROM solo_scores;
-CREATE VIEW score_legacy_id_map AS SELECT * FROM solo_scores_legacy_id_map;
-CREATE VIEW score_performance AS SELECT * FROM solo_scores_performance;
 CREATE VIEW score_process_history AS SELECT * FROM solo_scores_process_history;
 -- These tables aren't created above, yet.
 -- CREATE VIEW score_tokens AS SELECT * FROM solo_score_tokens;
