@@ -60,22 +60,18 @@ namespace Generator.Generators
                     + $"     `h`.`score_id` AS `{nameof(ScoreDiff.highscore_id)}`, "
                     + $"     `a`.`id` AS `{nameof(ScoreDiff.score_id)}`, "
                     + $"     `a`.`beatmap_id` AS `{nameof(ScoreDiff.beatmap_id)}`, "
-                    + $"     JSON_EXTRACT(`a`.`data`, '$.total_score') AS '{nameof(ScoreDiff.a_score)}', "
-                    + $"     JSON_EXTRACT(`b`.`data`, '$.total_score') AS '{nameof(ScoreDiff.b_score)}' "
+                    + $"     `a`.`total_score` AS '{nameof(ScoreDiff.a_score)}', "
+                    + $"     `b`.`total_score` AS '{nameof(ScoreDiff.b_score)}' "
                     + $"FROM `{Env.DB_A}`.`{dbInfo.HighScoreTable}` `h` "
-                    + $"JOIN `{Env.DB_A}`.`solo_scores_legacy_id_map` `ma` "
-                    + "     ON `ma`.`ruleset_id` = @RulesetId "
-                    + "     AND `ma`.`old_score_id` = `h`.`score_id` "
-                    + $"JOIN `{Env.DB_B}`.`solo_scores_legacy_id_map` `mb` "
-                    + "     ON `mb`.`ruleset_id` = @RulesetId "
-                    + "     AND `mb`.`old_score_id` = `h`.`score_id` "
-                    + $"JOIN `{Env.DB_A}`.`solo_scores` `a` "
-                    + "     ON `a`.`id` = `ma`.`score_id` "
-                    + $"JOIN `{Env.DB_B}`.`solo_scores` `b` "
-                    + "     ON `b`.`id` = `mb`.`score_id` "
-                    + $"WHERE JSON_EXTRACT(`b`.`data`, '$.total_score') - JSON_EXTRACT(`a`.`data`, '$.total_score') {comparer} "
+                    + $"JOIN `{Env.DB_A}`.`{SoloScore.TABLE_NAME}` `a` "
+                    + "     ON `a`.`legacy_score_id` = `h`.`score_id` "
+                    + "     AND `a`.`ruleset_id` = @RulesetId "
+                    + $"JOIN `{Env.DB_B}`.`{SoloScore.TABLE_NAME}` `b` "
+                    + "     ON `b`.`legacy_score_id` = `h`.`score_id` "
+                    + "     AND `b`.`ruleset_id` = @RulesetId "
+                    + $"WHERE CAST(`b`.`total_score` AS SIGNED) - CAST(`a`.`total_score` AS SIGNED) {comparer} "
                     + $"    AND `h`.`enabled_mods` {(withMods ? ">= 0 " : "= 0 ")} "
-                    + "ORDER BY JSON_EXTRACT(`b`.`data`, '$.total_score') - JSON_EXTRACT(`a`.`data`, '$.total_score') "
+                    + "ORDER BY CAST(`b`.`total_score` AS SIGNED) - CAST(`a`.`total_score` AS SIGNED) "
                     + (order == Order.Gains ? "DESC " : "ASC ")
                     + $"LIMIT {max_rows}", new
                     {
@@ -98,7 +94,7 @@ namespace Generator.Generators
                     {
                         d.highscore_id,
                         beatmapTask.beatmap_id,
-                        getModString(scoreTask.ScoreInfo.mods.ToArray()),
+                        getModString(scoreTask.ScoreData.Mods.ToArray()),
                         beatmapTask.filename,
                         d.a_score,
                         d.b_score,

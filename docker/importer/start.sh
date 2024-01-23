@@ -21,7 +21,7 @@ function import_scores() {
     # Ensure we have a fresh slate to work with...
     mysql "${MYSQL_ARGS[@]}" \
         --database="$db_name" \
-        --execute="TRUNCATE TABLE solo_scores; TRUNCATE TABLE solo_scores_legacy_id_map; TRUNCATE TABLE solo_scores_performance; TRUNCATE TABLE solo_scores_process_history;"
+        --execute="TRUNCATE TABLE solo_scores; TRUNCATE TABLE solo_scores_process_history;"
 
     cd "${processor_dir}"
     ./UseLocalOsu.sh
