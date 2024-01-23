@@ -69,7 +69,7 @@ namespace Generator.Generators
                     + $"JOIN `{Env.DB_B}`.`{SoloScore.TABLE_NAME}` `b` "
                     + "     ON `b`.`legacy_score_id` = `h`.`score_id` "
                     + "     AND `b`.`ruleset_id` = @RulesetId "
-                    + $"WHERE `b`.`total_score` - `a`.`total_score`) {comparer} "
+                    + $"WHERE `b`.`total_score` - `a`.`total_score` {comparer} "
                     + $"    AND `h`.`enabled_mods` {(withMods ? ">= 0 " : "= 0 ")} "
                     + "ORDER BY `b`.`total_score` - `a`.`total_score` "
                     + (order == Order.Gains ? "DESC " : "ASC ")
