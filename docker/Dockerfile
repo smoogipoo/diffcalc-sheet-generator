@@ -29,7 +29,7 @@ RUN rm packages-microsoft-prod.deb
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
-    dotnet-sdk-6.0
+    dotnet-sdk-8.0
 
 ###
 ### Generator image
