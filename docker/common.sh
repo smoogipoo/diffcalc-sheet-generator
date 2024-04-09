@@ -95,9 +95,8 @@ function get_hash() {
 ### -1 => Not initialised.
 ###  0 => DB imported.
 ###  1 => Difficulty calculation complete
-###  2 => Highscores imported
-###  3 => Score PP calculation complete
-###  4 => User PP calculation complete
+###  2 => Score PP calculation complete
+###  3 => User PP calculation complete
 ###
 ### Usage: get_db_step <db_name>
 function get_db_step() {

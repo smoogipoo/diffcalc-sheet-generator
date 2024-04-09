@@ -66,12 +66,6 @@ services:
     working_dir: '/app/diffcalc'
     command: [ './start.sh' ]
 
-  # Highscore importer
-  importer:
-    <<: *x-common
-    working_dir: '/app/importer'
-    command: [ './start.sh' ]
-
   # Performance points calculation
   ppcalc:
     <<: *x-common
@@ -90,8 +84,6 @@ services:
       setup:
         condition: service_started
       diffcalc:
-        condition: service_started
-      importer:
         condition: service_started
       ppcalc:
         condition: service_started
