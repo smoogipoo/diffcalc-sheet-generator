@@ -33,8 +33,8 @@ namespace Generator.Generators
 
         public ColumnDefinition[] Columns { get; } =
         {
-            new ColumnDefinition("beatmap", Width: 720),
             new ColumnDefinition("mods"),
+            new ColumnDefinition("beatmap", Width: 720),
             new ColumnDefinition("sr_master"),
             new ColumnDefinition("sr_pr"),
             new ColumnDefinition("diff"),
@@ -82,8 +82,8 @@ namespace Generator.Generators
                 foreach (var d in diffs)
                 {
                     rows.Add([
-                        $"=HYPERLINK(\"https://osu.ppy.sh/b/{d.id}\", \"{d.filename}\")",
                         getModString(LegacyRulesetHelper.GetRulesetFromLegacyId(d.playmode).ConvertFromLegacyMods((LegacyMods)d.mods).ToArray()),
+                        $"=HYPERLINK(\"https://osu.ppy.sh/b/{d.id}\", \"{d.filename}\")",
                         d.a_sr,
                         d.b_sr,
                         d.b_sr - d.a_sr,
