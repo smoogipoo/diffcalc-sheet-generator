@@ -146,7 +146,7 @@ public class DiffSpreadSheet
                      .Select(r => (IList<object>)r.ToList())
                      .ToList()
         }, SpreadSheet.SpreadsheetId, properties.Title);
-        request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+        request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
         await request.ExecuteAsync();
     }
 

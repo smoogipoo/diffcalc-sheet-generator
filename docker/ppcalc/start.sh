@@ -14,7 +14,7 @@ function process_scores() {
         return
     fi
 
-    wait_for_step $db_name 2
+    wait_for_step $db_name 1
 
     cd $processor_dir
     ./UseLocalOsu.sh
@@ -31,7 +31,7 @@ function process_scores() {
         --ruleset ${RULESET_ID} \
         --threads ${THREADS}
 
-    set_db_step $db_name 3
+    set_db_step $db_name 2
 }
 
 ### Runs the score statistics processor to recalculate all user totals.
@@ -46,7 +46,7 @@ function process_totals() {
         return
     fi
 
-    wait_for_step $db_name 3
+    wait_for_step $db_name 2
 
     cd $processor_dir
     ./UseLocalOsu.sh
@@ -64,7 +64,7 @@ function process_totals() {
         --ruleset ${RULESET_ID} \
         --threads ${THREADS}
 
-    set_db_step $db_name 4
+    set_db_step $db_name 3
 }
 
 PROCESSOR_A_DIR="${WORKDIR_A}/osu-queue-score-statistics"
