@@ -4,62 +4,85 @@
 using System.Diagnostics.CodeAnalysis;
 using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Scoring;
 
-namespace Generator.Models;
-
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[Serializable]
-[Table(TABLE_NAME)]
-public class SoloScore
+namespace Generator.Models
 {
-    public const string TABLE_NAME = "solo_scores";
-
-    [ExplicitKey]
-    public ulong id { get; set; }
-
-    public uint user_id { get; set; }
-
-    public uint beatmap_id { get; set; }
-
-    public ushort ruleset_id { get; set; }
-
-    public bool has_replay { get; set; }
-    public bool preserve { get; set; }
-    public bool ranked { get; set; } = true;
-
-    public ScoreRank rank { get; set; }
-
-    public bool passed { get; set; } = true;
-
-    public float accuracy { get; set; }
-
-    public uint max_combo { get; set; }
-
-    public uint total_score { get; set; }
-
-    public SoloScoreData ScoreData = new SoloScoreData();
-
-    public string data
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [Serializable]
+    [Table("scores")]
+    public class SoloScore
     {
-        get => JsonConvert.SerializeObject(ScoreData);
-        set
+        [ExplicitKey]
+        public ulong id { get; set; }
+
+        public uint user_id { get; set; }
+
+        public uint beatmap_id { get; set; }
+
+        public ushort ruleset_id { get; set; }
+
+        public bool has_replay { get; set; }
+        public bool preserve { get; set; }
+        public bool ranked { get; set; } = true;
+
+        public ScoreRank rank { get; set; }
+
+        public bool passed { get; set; } = true;
+
+        public float accuracy { get; set; }
+
+        public uint max_combo { get; set; }
+
+        public uint total_score { get; set; }
+
+        public SoloScoreData ScoreData = new SoloScoreData();
+
+        public string data
         {
-            var soloScoreData = JsonConvert.DeserializeObject<SoloScoreData>(value);
-            if (soloScoreData != null)
-                ScoreData = soloScoreData;
+            get => JsonConvert.SerializeObject(ScoreData);
+            set
+            {
+                var soloScoreData = JsonConvert.DeserializeObject<SoloScoreData>(value);
+                if (soloScoreData != null)
+                    ScoreData = soloScoreData;
+            }
         }
+
+        public double? pp { get; set; }
+
+        public ulong? legacy_score_id { get; set; }
+        public uint legacy_total_score { get; set; }
+
+        public DateTimeOffset? started_at { get; set; }
+        public DateTimeOffset ended_at { get; set; }
+
+        public override string ToString() => $"score_id: {id} user_id: {user_id}";
+
+        public ushort? build_id { get; set; }
+
+        public SoloScoreInfo ToScoreInfo() => new SoloScoreInfo
+        {
+            BeatmapID = (int)beatmap_id,
+            RulesetID = ruleset_id,
+            BuildID = build_id,
+            Passed = passed,
+            TotalScore = total_score,
+            Accuracy = accuracy,
+            UserID = (int)user_id,
+            MaxCombo = (int)max_combo,
+            Rank = rank,
+            StartedAt = started_at,
+            EndedAt = ended_at,
+            Mods = ScoreData.Mods,
+            Statistics = ScoreData.Statistics,
+            MaximumStatistics = ScoreData.MaximumStatistics,
+            LegacyTotalScore = (int?)legacy_total_score,
+            LegacyScoreId = legacy_score_id,
+            ID = id,
+            PP = pp,
+            HasReplay = has_replay
+        };
     }
-
-    public double? pp { get; set; }
-
-    public ulong? legacy_score_id { get; set; }
-    public uint? legacy_total_score { get; set; }
-
-    public DateTimeOffset? started_at { get; set; }
-    public DateTimeOffset ended_at { get; set; }
-
-    public override string ToString() => $"score_id: {id} user_id: {user_id}";
-
-    public ushort? build_id { get; set; }
 }
