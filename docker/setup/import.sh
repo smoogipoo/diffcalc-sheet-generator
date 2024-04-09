@@ -29,6 +29,28 @@ function ensure_space_available() {
     done
 }
 
+function truncate_sql() {
+    local file="/sql/${RULESET}/$1.sql"
+
+    if [ ! -e "$file" ]; then
+        return
+    fi
+
+    # Indices of LOCK TABLES/UNLOCK TABLES lines.
+    lines=($(grep -n "LOCK" "${file}" | awk -F: '{ print $1 }'))
+
+    # Up to the first LOCK TABLES line
+    result=$(cat "${file}" | head -n ${lines[0]})
+
+    result+="
+    "
+
+    # From the UNLOCK TABLES line onwards
+    result+=$(cat "${file}" | tail -n +${lines[1]})
+
+    echo "${result}" > "${file}"
+}
+
 ### Creates a database and ensures it's populated for the given ruleset.
 ###
 ### Usage: setup_database <db_name>
@@ -58,6 +80,16 @@ function setup_database() {
 
     set_db_step $db_name 0
 }
+
+echo "Preparing files..."
+truncate_sql "osu_beatmap_difficulty_attribs"
+truncate_sql "osu_beatmap_difficulty"
+truncate_sql "osu_beatmap_failtimes"
+truncate_sql "osu_scores_high"
+truncate_sql "osu_scores_taiko_high"
+truncate_sql "osu_scores_fruits_high"
+truncate_sql "osu_scores_mania_high"
+truncate_sql "osu_user_beatmap_playcount"
 
 echo "Creating databases..."
 
