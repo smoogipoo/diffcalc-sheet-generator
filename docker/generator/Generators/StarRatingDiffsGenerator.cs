@@ -11,8 +11,6 @@ namespace Generator.Generators
 {
     public class StarRatingDiffsGenerator : IGenerator
     {
-        private const int max_rows = 10000;
-
         private readonly Order order;
 
         public StarRatingDiffsGenerator(bool withMods, Order order)
@@ -52,7 +50,7 @@ namespace Generator.Generators
             {
                 string comparer = order == Order.Gains ? "> 0.1" : "< -0.1";
 
-                IEnumerable<BeatmapDiff> diffs = await db.QueryAsync<BeatmapDiff>(
+                IAsyncEnumerable<BeatmapDiff> diffs = db.QueryUnbufferedAsync<BeatmapDiff>(
                     "SELECT "
                     + $"     `a`.`beatmap_id` AS `{nameof(BeatmapDiff.id)}`, "
                     + $"     `bm`.`playmode` AS `{nameof(BeatmapDiff.playmode)}`, "
@@ -74,13 +72,12 @@ namespace Generator.Generators
                     + $"    AND `b`.`diff_unified` - `a`.`diff_unified` {comparer} "
                     + $"    AND `a`.`mods` {(WithMods ? ">= 0 " : "= 0 ")}"
                     + "ORDER BY `b`.`diff_unified` - `a`.`diff_unified` "
-                    + (order == Order.Gains ? "DESC " : "ASC ")
-                    + $"LIMIT {max_rows}", new
+                    + (order == Order.Gains ? "DESC " : "ASC "), new
                     {
                         RulesetId = Env.RULESET_ID
                     }, commandTimeout: int.MaxValue);
 
-                foreach (var d in diffs)
+                await foreach (var d in diffs)
                 {
                     APIMod[] mods = LegacyRulesetHelper.GetRulesetFromLegacyId(d.playmode)
                                                        .ConvertFromLegacyMods((LegacyMods)d.mods)
@@ -98,6 +95,9 @@ namespace Generator.Generators
                         d.b_sr - d.a_sr,
                         d.a_sr == 0 ? 1.0f : d.b_sr / d.a_sr - 1
                     ]);
+
+                    if (rows.Count == IGenerator.MAX_ROWS)
+                        break;
                 }
             }
 
@@ -110,14 +110,14 @@ namespace Generator.Generators
         [Serializable]
         private struct BeatmapDiff
         {
-            public uint id;
-            public byte playmode;
-            public string filename;
+            public uint id { get; set; }
+            public byte playmode { get; set; }
+            public string filename { get; set; }
 
-            public int mods;
+            public int mods { get; set; }
 
-            public float a_sr;
-            public float b_sr;
+            public float a_sr { get; set; }
+            public float b_sr { get; set; }
         }
     }
 }

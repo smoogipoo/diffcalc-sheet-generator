@@ -8,6 +8,8 @@ namespace Generator.Generators
 {
     public interface IGenerator
     {
+        const int MAX_ROWS = 10000;
+
         string Name { get; }
 
         ColumnDefinition[] Columns { get; }

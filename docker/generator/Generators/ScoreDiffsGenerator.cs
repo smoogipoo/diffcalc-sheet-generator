@@ -11,8 +11,6 @@ namespace Generator.Generators
 {
     public class ScoreDiffsGenerator : IGenerator
     {
-        private const int max_rows = 10000;
-
         private readonly Order order;
 
         public ScoreDiffsGenerator(bool withMods, Order order)
@@ -53,7 +51,7 @@ namespace Generator.Generators
             {
                 string comparer = order == Order.Gains ? "> 0" : "< 0";
 
-                IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
+                IAsyncEnumerable<ScoreDiff> diffs = db.QueryUnbufferedAsync<ScoreDiff>(
                     "SELECT "
                     + $"     `a`.`id` AS `{nameof(ScoreDiff.score_id)}`, "
                     + $"     `a`.`legacy_score_id` AS `{nameof(ScoreDiff.legacy_score_id)}`, "
@@ -69,13 +67,12 @@ namespace Generator.Generators
                     + "     ON `bm`.`beatmap_id` = `a`.`beatmap_id` "
                     + $"WHERE CAST(`b`.`total_score` AS SIGNED) - CAST(`a`.`total_score` AS SIGNED) {comparer} "
                     + "ORDER BY CAST(`b`.`total_score` AS SIGNED) - CAST(`a`.`total_score` AS SIGNED) "
-                    + (order == Order.Gains ? "DESC " : "ASC ")
-                    + $"LIMIT {max_rows}", new
+                    + (order == Order.Gains ? "DESC " : "ASC "), new
                     {
                         RulesetId = Env.RULESET_ID
                     }, commandTimeout: int.MaxValue);
 
-                foreach (var d in diffs)
+                await foreach (var d in diffs)
                 {
                     SoloScoreData scoreData = d.GetScoreData();
 
@@ -91,6 +88,9 @@ namespace Generator.Generators
                         d.b_score - d.a_score,
                         d.a_score == 0 ? 1.0f : d.b_score / d.a_score - 1
                     ]);
+
+                    if (rows.Count == IGenerator.MAX_ROWS)
+                        break;
                 }
             }
 
@@ -103,16 +103,16 @@ namespace Generator.Generators
         [Serializable]
         private struct ScoreDiff
         {
-            public ulong score_id;
-            public ulong? legacy_score_id;
+            public ulong score_id { get; set; }
+            public ulong? legacy_score_id { get; set; }
 
-            public uint beatmap_id;
-            public string beatmap_filename;
+            public uint beatmap_id { get; set; }
+            public string beatmap_filename { get; set; }
 
-            public float a_score;
-            public float b_score;
+            public float a_score { get; set; }
+            public float b_score { get; set; }
 
-            public string data;
+            public string data { get; set; }
 
             public SoloScoreData GetScoreData() => JsonConvert.DeserializeObject<SoloScoreData>(data) ?? new SoloScoreData();
         }
