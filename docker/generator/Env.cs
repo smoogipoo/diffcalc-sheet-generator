@@ -13,6 +13,9 @@ public static class Env
     public static readonly bool RANKED_ONLY;
     public static readonly string[] GENERATOR_LIST;
 
+    public static readonly string MOD_FILTERS_RAW;
+    public static readonly ModFilter[] MOD_FILTERS;
+
     static Env()
     {
         RULESET = Environment.GetEnvironmentVariable("RULESET") ?? throw new InvalidOperationException("Missing RULESET environment variable.");
@@ -28,5 +31,11 @@ public static class Env
                          .Select(s => s.Trim().ToLowerInvariant())
                          .Distinct()
                          .ToArray();
+
+        MOD_FILTERS_RAW = Environment.GetEnvironmentVariable("MOD_FILTERS") ?? string.Empty;
+        MOD_FILTERS = MOD_FILTERS_RAW
+                      .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                      .Select(s => new ModFilter(s.ToUpperInvariant()))
+                      .ToArray();
     }
 }

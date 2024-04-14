@@ -5,20 +5,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Dapper;
 using osu.Game.Beatmaps.Legacy;
-using osu.Game.Rulesets.Mods;
+using osu.Game.Online.API;
 
 namespace Generator.Generators
 {
     public class StarRatingDiffsGenerator : IGenerator
     {
-        private const int max_rows = 10000;
-
-        private readonly bool withMods;
         private readonly Order order;
 
         public StarRatingDiffsGenerator(bool withMods, Order order)
         {
-            this.withMods = withMods;
             this.order = order;
 
             StringBuilder sb = new StringBuilder("SR");
@@ -27,6 +23,7 @@ namespace Generator.Generators
             sb.Append(withMods ? " (All)" : " (NM)");
 
             Name = sb.ToString();
+            WithMods = withMods;
         }
 
         public string Name { get; }
@@ -41,9 +38,11 @@ namespace Generator.Generators
             new ColumnDefinition("diff%", ColumnType.Percentage),
         };
 
+        public bool WithMods { get; }
+
         public async Task<object[][]> Query()
         {
-            Console.WriteLine($"Querying SR diffs (mods: {withMods}, type: {order})...");
+            Console.WriteLine($"Querying SR diffs (mods: {WithMods}, type: {order})...");
 
             List<object[]> rows = new List<object[]>();
 
@@ -51,7 +50,7 @@ namespace Generator.Generators
             {
                 string comparer = order == Order.Gains ? "> 0.1" : "< -0.1";
 
-                IEnumerable<BeatmapDiff> diffs = await db.QueryAsync<BeatmapDiff>(
+                IAsyncEnumerable<BeatmapDiff> diffs = db.QueryUnbufferedAsync<BeatmapDiff>(
                     "SELECT "
                     + $"     `a`.`beatmap_id` AS `{nameof(BeatmapDiff.id)}`, "
                     + $"     `bm`.`playmode` AS `{nameof(BeatmapDiff.playmode)}`, "
@@ -71,46 +70,54 @@ namespace Generator.Generators
                     + "WHERE `a`.`mode` = @RulesetId "
                     + $"    AND {IGenerator.GenerateBeatmapFilter("bm")} "
                     + $"    AND `b`.`diff_unified` - `a`.`diff_unified` {comparer} "
-                    + $"    AND `a`.`mods` {(withMods ? ">= 0 " : "= 0 ")}"
+                    + $"    AND `a`.`mods` {(WithMods ? ">= 0 " : "= 0 ")}"
                     + "ORDER BY `b`.`diff_unified` - `a`.`diff_unified` "
-                    + (order == Order.Gains ? "DESC " : "ASC ")
-                    + $"LIMIT {max_rows}", new
+                    + (order == Order.Gains ? "DESC " : "ASC "), new
                     {
                         RulesetId = Env.RULESET_ID
                     }, commandTimeout: int.MaxValue);
 
-                foreach (var d in diffs)
+                await foreach (var d in diffs)
                 {
+                    APIMod[] mods = LegacyRulesetHelper.GetRulesetFromLegacyId(d.playmode)
+                                                       .ConvertFromLegacyMods((LegacyMods)d.mods)
+                                                       .Select(m => new APIMod(m))
+                                                       .ToArray();
+
+                    if (!this.ModsMatchFilter(mods, null))
+                        continue;
+
                     rows.Add([
-                        getModString(LegacyRulesetHelper.GetRulesetFromLegacyId(d.playmode).ConvertFromLegacyMods((LegacyMods)d.mods).ToArray()),
+                        this.FormatMods(mods),
                         $"=HYPERLINK(\"https://osu.ppy.sh/b/{d.id}\", \"{d.filename}\")",
                         d.a_sr,
                         d.b_sr,
                         d.b_sr - d.a_sr,
                         d.a_sr == 0 ? 1.0f : d.b_sr / d.a_sr - 1
                     ]);
+
+                    if (rows.Count == IGenerator.MAX_ROWS)
+                        break;
                 }
             }
 
-            Console.WriteLine($"Finished querying SR diffs (mods: {withMods}, type: {order})...");
+            Console.WriteLine($"Finished querying SR diffs (mods: {WithMods}, type: {order})...");
 
             return rows.ToArray();
         }
-
-        private static string getModString(Mod[] mods) => mods.Any() ? string.Join(", ", mods.Select(m => m.Acronym.ToUpper())) : "NM";
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [Serializable]
         private struct BeatmapDiff
         {
-            public uint id;
-            public byte playmode;
-            public string filename;
+            public uint id { get; set; }
+            public byte playmode { get; set; }
+            public string filename { get; set; }
 
-            public int mods;
+            public int mods { get; set; }
 
-            public float a_sr;
-            public float b_sr;
+            public float a_sr { get; set; }
+            public float b_sr { get; set; }
         }
     }
 }

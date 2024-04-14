@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.0.123" />
+      <PackageReference Include="Dapper" Version="2.1.44" />
       <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
       <PackageReference Include="Google.Apis.Drive.v3" Version="1.57.0.2684" />
       <PackageReference Include="Google.Apis.Sheets.v4" Version="1.57.0.2727" />

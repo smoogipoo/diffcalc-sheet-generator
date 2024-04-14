@@ -6,20 +6,15 @@ using System.Text;
 using Dapper;
 using Generator.Models;
 using Newtonsoft.Json;
-using osu.Game.Online.API;
 
 namespace Generator.Generators
 {
     public class PerformanceDiffsGenerator : IGenerator
     {
-        private const int max_rows = 10000;
-
-        private readonly bool withMods;
         private readonly Order order;
 
         public PerformanceDiffsGenerator(bool withMods, Order order)
         {
-            this.withMods = withMods;
             this.order = order;
 
             StringBuilder sb = new StringBuilder("PP");
@@ -28,6 +23,7 @@ namespace Generator.Generators
             sb.Append(withMods ? " (All)" : " (NM)");
 
             Name = sb.ToString();
+            WithMods = withMods;
         }
 
         public string Name { get; }
@@ -43,9 +39,11 @@ namespace Generator.Generators
             new ColumnDefinition("diff%", ColumnType.Percentage),
         };
 
+        public bool WithMods { get; }
+
         public async Task<object[][]> Query()
         {
-            Console.WriteLine($"Querying PP diffs (mods: {withMods}, type: {order})...");
+            Console.WriteLine($"Querying PP diffs (mods: {WithMods}, type: {order})...");
 
             List<object[]> rows = new List<object[]>();
 
@@ -53,7 +51,7 @@ namespace Generator.Generators
             {
                 string comparer = order == Order.Gains ? "> 0.1" : "< -0.1";
 
-                IEnumerable<ScoreDiff> diffs = await db.QueryAsync<ScoreDiff>(
+                IAsyncEnumerable<ScoreDiff> diffs = db.QueryUnbufferedAsync<ScoreDiff>(
                     "SELECT "
                     + $"     `a`.`id` AS `{nameof(ScoreDiff.score_id)}`, "
                     + $"     `a`.`legacy_score_id` AS `{nameof(ScoreDiff.legacy_score_id)}`, "
@@ -70,52 +68,52 @@ namespace Generator.Generators
                     + $"WHERE {IGenerator.GenerateBeatmapFilter("bm")} "
                     + $"    AND `b`.`pp` - `a`.`pp` {comparer} "
                     + "ORDER BY `b`.`pp` - `a`.`pp` "
-                    + (order == Order.Gains ? "DESC " : "ASC ")
-                    + $"LIMIT {max_rows}", new
+                    + (order == Order.Gains ? "DESC " : "ASC "), new
                     {
                         RulesetId = Env.RULESET_ID
                     }, commandTimeout: int.MaxValue);
 
-                foreach (var d in diffs)
+                await foreach (var d in diffs)
                 {
                     SoloScoreData scoreData = d.GetScoreData();
 
-                    if (!withMods && scoreData.Mods.Length > (d.legacy_score_id > 0 ? 1 : 0))
+                    if (!this.ModsMatchFilter(scoreData.Mods, d.legacy_score_id))
                         continue;
 
                     rows.Add([
                         $"=HYPERLINK(\"https://osu.ppy.sh/scores/{d.score_id}\", \"{d.score_id}\")",
-                        getModString(scoreData.Mods.ToArray()),
+                        this.FormatMods(scoreData.Mods),
                         $"=HYPERLINK(\"https://osu.ppy.sh/b/{d.beatmap_id}\", \"{d.beatmap_filename}\")",
                         d.a_pp,
                         d.b_pp,
                         d.b_pp - d.a_pp,
                         d.a_pp == 0 ? 1.0f : d.b_pp / d.a_pp - 1
                     ]);
+
+                    if (rows.Count == IGenerator.MAX_ROWS)
+                        break;
                 }
 
-                Console.WriteLine($"Finished querying PP diffs (mods: {withMods}, type: {order})...");
+                Console.WriteLine($"Finished querying PP diffs (mods: {WithMods}, type: {order})...");
 
                 return rows.ToArray();
             }
         }
 
-        private static string getModString(APIMod[] mods) => mods.Any() ? string.Join(", ", mods.Select(m => m.Acronym.ToUpper())) : "NM";
-
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [Serializable]
         private struct ScoreDiff
         {
-            public ulong score_id;
-            public ulong? legacy_score_id;
+            public ulong score_id { get; set; }
+            public ulong? legacy_score_id { get; set; }
 
-            public uint beatmap_id;
-            public string beatmap_filename;
+            public uint beatmap_id { get; set; }
+            public string beatmap_filename { get; set; }
 
-            public float a_pp;
-            public float b_pp;
+            public float a_pp { get; set; }
+            public float b_pp { get; set; }
 
-            public string data;
+            public string data { get; set; }
 
             public SoloScoreData GetScoreData() => JsonConvert.DeserializeObject<SoloScoreData>(data) ?? new SoloScoreData();
         }

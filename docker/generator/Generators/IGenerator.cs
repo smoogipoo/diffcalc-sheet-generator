@@ -2,14 +2,19 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Text;
+using osu.Game.Online.API;
 
 namespace Generator.Generators
 {
     public interface IGenerator
     {
+        const int MAX_ROWS = 10000;
+
         string Name { get; }
 
         ColumnDefinition[] Columns { get; }
+
+        bool WithMods { get; }
 
         Task<object[][]> Query();
 
@@ -31,5 +36,29 @@ namespace Generator.Generators
                 builder.Append(query);
             }
         }
+    }
+
+    public static class GeneratorExtensions
+    {
+        /// <summary>
+        /// Whether the given mods should be filtered out.
+        /// </summary>
+        public static bool ModsMatchFilter(this IGenerator generator, APIMod[] mods, ulong? legacyScoreId)
+        {
+            if (legacyScoreId != null)
+                mods = mods.Where(m => m.Acronym != "CL").ToArray();
+
+            if (!generator.WithMods && mods.Length > 0)
+                return false;
+
+            return Env.MOD_FILTERS.Length == 0
+                   || Env.MOD_FILTERS.Any(f => f.Matches(mods));
+        }
+
+        /// <summary>
+        /// Formats mods for the spreadsheet.
+        /// </summary>
+        public static string FormatMods(this IGenerator generator, IEnumerable<APIMod> mods)
+            => mods.Any() ? string.Join(", ", mods.Select(m => m.Acronym.ToUpper())) : "NM";
     }
 }
