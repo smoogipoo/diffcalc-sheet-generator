@@ -6,7 +6,6 @@ using System.Text;
 using Dapper;
 using Generator.Models;
 using Newtonsoft.Json;
-using osu.Game.Online.API;
 
 namespace Generator.Generators
 {
@@ -14,12 +13,10 @@ namespace Generator.Generators
     {
         private const int max_rows = 10000;
 
-        private readonly bool withMods;
         private readonly Order order;
 
         public PerformanceDiffsGenerator(bool withMods, Order order)
         {
-            this.withMods = withMods;
             this.order = order;
 
             StringBuilder sb = new StringBuilder("PP");
@@ -28,6 +25,7 @@ namespace Generator.Generators
             sb.Append(withMods ? " (All)" : " (NM)");
 
             Name = sb.ToString();
+            WithMods = withMods;
         }
 
         public string Name { get; }
@@ -43,9 +41,11 @@ namespace Generator.Generators
             new ColumnDefinition("diff%", ColumnType.Percentage),
         };
 
+        public bool WithMods { get; }
+
         public async Task<object[][]> Query()
         {
-            Console.WriteLine($"Querying PP diffs (mods: {withMods}, type: {order})...");
+            Console.WriteLine($"Querying PP diffs (mods: {WithMods}, type: {order})...");
 
             List<object[]> rows = new List<object[]>();
 
@@ -80,12 +80,12 @@ namespace Generator.Generators
                 {
                     SoloScoreData scoreData = d.GetScoreData();
 
-                    if (!withMods && scoreData.Mods.Length > (d.legacy_score_id > 0 ? 1 : 0))
+                    if (!this.ModsMatchFilter(scoreData.Mods, d.legacy_score_id))
                         continue;
 
                     rows.Add([
                         $"=HYPERLINK(\"https://osu.ppy.sh/scores/{d.score_id}\", \"{d.score_id}\")",
-                        getModString(scoreData.Mods.ToArray()),
+                        this.FormatMods(scoreData.Mods),
                         $"=HYPERLINK(\"https://osu.ppy.sh/b/{d.beatmap_id}\", \"{d.beatmap_filename}\")",
                         d.a_pp,
                         d.b_pp,
@@ -94,13 +94,11 @@ namespace Generator.Generators
                     ]);
                 }
 
-                Console.WriteLine($"Finished querying PP diffs (mods: {withMods}, type: {order})...");
+                Console.WriteLine($"Finished querying PP diffs (mods: {WithMods}, type: {order})...");
 
                 return rows.ToArray();
             }
         }
-
-        private static string getModString(APIMod[] mods) => mods.Any() ? string.Join(", ", mods.Select(m => m.Acronym.ToUpper())) : "NM";
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [Serializable]

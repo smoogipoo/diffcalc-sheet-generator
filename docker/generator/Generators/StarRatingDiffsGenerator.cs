@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Dapper;
 using osu.Game.Beatmaps.Legacy;
-using osu.Game.Rulesets.Mods;
+using osu.Game.Online.API;
 
 namespace Generator.Generators
 {
@@ -13,12 +13,10 @@ namespace Generator.Generators
     {
         private const int max_rows = 10000;
 
-        private readonly bool withMods;
         private readonly Order order;
 
         public StarRatingDiffsGenerator(bool withMods, Order order)
         {
-            this.withMods = withMods;
             this.order = order;
 
             StringBuilder sb = new StringBuilder("SR");
@@ -27,6 +25,7 @@ namespace Generator.Generators
             sb.Append(withMods ? " (All)" : " (NM)");
 
             Name = sb.ToString();
+            WithMods = withMods;
         }
 
         public string Name { get; }
@@ -41,9 +40,11 @@ namespace Generator.Generators
             new ColumnDefinition("diff%", ColumnType.Percentage),
         };
 
+        public bool WithMods { get; }
+
         public async Task<object[][]> Query()
         {
-            Console.WriteLine($"Querying SR diffs (mods: {withMods}, type: {order})...");
+            Console.WriteLine($"Querying SR diffs (mods: {WithMods}, type: {order})...");
 
             List<object[]> rows = new List<object[]>();
 
@@ -71,7 +72,7 @@ namespace Generator.Generators
                     + "WHERE `a`.`mode` = @RulesetId "
                     + $"    AND {IGenerator.GenerateBeatmapFilter("bm")} "
                     + $"    AND `b`.`diff_unified` - `a`.`diff_unified` {comparer} "
-                    + $"    AND `a`.`mods` {(withMods ? ">= 0 " : "= 0 ")}"
+                    + $"    AND `a`.`mods` {(WithMods ? ">= 0 " : "= 0 ")}"
                     + "ORDER BY `b`.`diff_unified` - `a`.`diff_unified` "
                     + (order == Order.Gains ? "DESC " : "ASC ")
                     + $"LIMIT {max_rows}", new
@@ -81,8 +82,16 @@ namespace Generator.Generators
 
                 foreach (var d in diffs)
                 {
+                    APIMod[] mods = LegacyRulesetHelper.GetRulesetFromLegacyId(d.playmode)
+                                                       .ConvertFromLegacyMods((LegacyMods)d.mods)
+                                                       .Select(m => new APIMod(m))
+                                                       .ToArray();
+
+                    if (!this.ModsMatchFilter(mods, null))
+                        continue;
+
                     rows.Add([
-                        getModString(LegacyRulesetHelper.GetRulesetFromLegacyId(d.playmode).ConvertFromLegacyMods((LegacyMods)d.mods).ToArray()),
+                        this.FormatMods(mods),
                         $"=HYPERLINK(\"https://osu.ppy.sh/b/{d.id}\", \"{d.filename}\")",
                         d.a_sr,
                         d.b_sr,
@@ -92,12 +101,10 @@ namespace Generator.Generators
                 }
             }
 
-            Console.WriteLine($"Finished querying SR diffs (mods: {withMods}, type: {order})...");
+            Console.WriteLine($"Finished querying SR diffs (mods: {WithMods}, type: {order})...");
 
             return rows.ToArray();
         }
-
-        private static string getModString(Mod[] mods) => mods.Any() ? string.Join(", ", mods.Select(m => m.Acronym.ToUpper())) : "NM";
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [Serializable]

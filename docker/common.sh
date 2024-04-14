@@ -198,3 +198,4 @@ export GENERATORS
 export THREADS
 export SCHEMA=1
 export MAX_DATABASE_SIZE
+export MOD_FILTERS

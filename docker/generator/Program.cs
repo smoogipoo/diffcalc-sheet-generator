@@ -1,16 +1,21 @@
-﻿using Generator;
+﻿using System.Text;
+using Generator;
 using Generator.Diff;
 using Generator.Generators;
 
 if (Env.GENERATOR_LIST.Length == 0)
     Console.WriteLine("Nothing to generate (no generators)!");
 
-DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create(
-    $"{Env.RULESET}: "
-    + $"{Env.DB_A[..7]} (A) vs {Env.DB_B[..7]} (B) "
-    + "| "
-    + $"converts: {!Env.NO_CONVERTS}, "
-    + $"ranked-only: {Env.RANKED_ONLY}");
+StringBuilder titleBuilder = new StringBuilder();
+titleBuilder.Append($"{Env.RULESET}: ");
+titleBuilder.Append($"{Env.DB_A[..7]} (A) vs {Env.DB_B[..7]} (B) ");
+titleBuilder.Append("| ");
+titleBuilder.Append($"converts: {!Env.NO_CONVERTS}, ");
+titleBuilder.Append($"ranked-only: {Env.RANKED_ONLY}");
+if (Env.MOD_FILTERS.Length != 0)
+    titleBuilder.Append($", mods: {Env.MOD_FILTERS_RAW}");
+
+DiffSpreadSheet spreadsheet = await DiffSpreadSheet.Create(titleBuilder.ToString());
 
 Console.WriteLine($"Spreadsheet created: {spreadsheet.SpreadSheet.SpreadsheetUrl}");
 Console.WriteLine($"Now generating (generators: {string.Join(", ", Env.GENERATOR_LIST)})");
@@ -24,22 +29,37 @@ foreach (string gen in Env.GENERATOR_LIST)
         case "pp":
             generators.Add(new PerformanceDiffsGenerator(true, Order.Gains));
             generators.Add(new PerformanceDiffsGenerator(true, Order.Losses));
-            generators.Add(new PerformanceDiffsGenerator(false, Order.Gains));
-            generators.Add(new PerformanceDiffsGenerator(false, Order.Losses));
+
+            if (Env.MOD_FILTERS.Length == 0)
+            {
+                generators.Add(new PerformanceDiffsGenerator(false, Order.Gains));
+                generators.Add(new PerformanceDiffsGenerator(false, Order.Losses));
+            }
+
             break;
 
         case "sr":
             generators.Add(new StarRatingDiffsGenerator(true, Order.Gains));
             generators.Add(new StarRatingDiffsGenerator(true, Order.Losses));
-            generators.Add(new StarRatingDiffsGenerator(false, Order.Gains));
-            generators.Add(new StarRatingDiffsGenerator(false, Order.Losses));
+
+            if (Env.MOD_FILTERS.Length == 0)
+            {
+                generators.Add(new StarRatingDiffsGenerator(false, Order.Gains));
+                generators.Add(new StarRatingDiffsGenerator(false, Order.Losses));
+            }
+
             break;
 
         case "score":
             generators.Add(new ScoreDiffsGenerator(true, Order.Gains));
             generators.Add(new ScoreDiffsGenerator(true, Order.Losses));
-            generators.Add(new ScoreDiffsGenerator(false, Order.Gains));
-            generators.Add(new ScoreDiffsGenerator(false, Order.Losses));
+
+            if (Env.MOD_FILTERS.Length == 0)
+            {
+                generators.Add(new ScoreDiffsGenerator(false, Order.Gains));
+                generators.Add(new ScoreDiffsGenerator(false, Order.Losses));
+            }
+
             break;
     }
 }
