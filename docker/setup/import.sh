@@ -72,11 +72,7 @@ function setup_database() {
     (pv --force -p $(find "/sql/${RULESET}" -type f -name "*.sql") | mysql "${MYSQL_ARGS[@]}" --database="$db_name") 2>&1 | stdbuf -o0 tr '\r' '\n'
 
     echo "Applying fixes..."
-    (pv --force -p $(find "/app/setup/fixes" -type f -name "*.sql") | mysql "${MYSQL_ARGS[@]}" --database="$db_name") 2>&1 | stdbuf -o0 tr '\r' '\n'
-
-    for i in {1..1000..2}; do
-        mysql "${MYSQL_ARGS[@]}" --database="$db_name" -e "INSERT IGNORE INTO osu_difficulty_attribs (attrib_id, name) VALUES (${i}, 'Attrib ID ${i}')"
-    done
+    (pv --force -p $(find "/app/setup/fixes" -type f -name "*.sql" | sort -n) | mysql "${MYSQL_ARGS[@]}" --database="$db_name") 2>&1 | stdbuf -o0 tr '\r' '\n'
 
     set_db_step $db_name 0
 }
