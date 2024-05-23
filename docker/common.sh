@@ -33,6 +33,12 @@ NC='\033[0m'
 YELLOW='\033[0;33m'
 RED='\033[0;31m'
 
+STEP_IMPORT=-1
+STEP_DIFFCALC=0
+STEP_PPCALC_SCORE=1
+STEP_PPCALC_USER=2
+STEP_GENERATE=3
+
 ### Clones a given repository URL into a target directory.
 ### The URL may link to a pull request, commit, or tree.
 ###
@@ -128,18 +134,40 @@ function set_db_step() {
 
 ### Waits for the database to reach a given step.
 ###
-### See: get_db_step()
-###
 ### Usage: wait_for_step <db_name> <num>
+### Returns: true when successfully complete, false to skip the current step.
+###
+### The intended usage pattern is:
+###    wait_for_step ... || return
+###
 function wait_for_step() {
     local db_name=$1
-    local num=$2
+    local step=$2
 
-    echo "Waiting for database ${db_name} to reach step ${num}. Currently at step $(get_db_step ${db_name})."
+    if [[ "$(get_db_step ${db_name})" -gt "${step}" ]]; then
+        return 1
+    fi
 
-    while [[ $(get_db_step ${db_name}) != ${num} ]]; do
+    echo "Waiting for database ${db_name} to reach step ${step}. Currently at step $(get_db_step ${db_name})."
+
+    while [[ "$(get_db_step ${db_name})" != "${step}" ]]; do
         sleep 5
     done
+
+    return 0
+}
+
+### Advances to the next step in the database.
+###
+### Usage next_step <db_name>
+function next_step() {
+    local db_name=$1
+    local current_step="$(get_db_step ${db_name})"
+
+    if [[ "${current_step}" -lt "${STEP_GENERATE}" ]]; then
+        local next_step=$((${current_step} + 1))
+        set_db_step "${db_name}" "${next_step}"
+    fi
 }
 
 function get_db_size() {

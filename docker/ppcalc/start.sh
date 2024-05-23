@@ -9,12 +9,8 @@ function process_scores() {
     local db_name=$1
     local processor_dir=$2
 
-    if [[ $(get_db_step ${db_name}) -ge 3 ]]; then
-        echo "Score PP values are up to date."
-        return
-    fi
-
-    wait_for_step $db_name 1
+    wait_for_step "${db_name}" "${STEP_PPCALC_SCORE}" \
+        || { echo "Score PP values are up to date."; return; }
 
     cd $processor_dir
     ./UseLocalOsu.sh
@@ -31,7 +27,7 @@ function process_scores() {
         --ruleset ${RULESET_ID} \
         --threads ${THREADS}
 
-    set_db_step $db_name 2
+    next_step "${db_name}"
 }
 
 ### Runs the score statistics processor to recalculate all user totals.
@@ -41,12 +37,8 @@ function process_totals() {
     local db_name=$1
     local processor_dir=$2
 
-    if [[ $(get_db_step ${db_name}) -ge 4 ]]; then
-        echo "User PP values are up to date."
-        return
-    fi
-
-    wait_for_step $db_name 2
+    wait_for_step "${db_name}" "${STEP_PPCALC_USER}" \
+        || { echo "User PP values are up to date."; return; }
 
     cd $processor_dir
     ./UseLocalOsu.sh
@@ -64,7 +56,7 @@ function process_totals() {
         --ruleset ${RULESET_ID} \
         --threads ${THREADS}
 
-    set_db_step $db_name 3
+    next_step "${db_name}"
 }
 
 PROCESSOR_A_DIR="${WORKDIR_A}/osu-queue-score-statistics"
