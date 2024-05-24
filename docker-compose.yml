@@ -60,6 +60,12 @@ services:
     working_dir: '/app/setup'
     command: [ './import.sh' ]
 
+  # Verify scores
+  verify:
+    <<: *x-common
+    working_dir: '/app/verify'
+    command: [ './start.sh' ]
+
   # Difficulty calculation
   diffcalc:
     <<: *x-common
@@ -82,6 +88,8 @@ services:
       <<: *x-common-depends
       # To support running `docker-compose up generator`...
       setup:
+        condition: service_started
+      verify:
         condition: service_started
       diffcalc:
         condition: service_started
