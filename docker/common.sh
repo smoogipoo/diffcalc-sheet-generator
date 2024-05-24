@@ -35,9 +35,10 @@ RED='\033[0;31m'
 
 STEP_IMPORT=-1
 STEP_DIFFCALC=0
-STEP_PPCALC_SCORE=1
-STEP_PPCALC_USER=2
-STEP_GENERATE=3
+STEP_VERIFY=1
+STEP_PPCALC_SCORE=2
+STEP_PPCALC_USER=3
+STEP_GENERATE=4
 
 ### Clones a given repository URL into a target directory.
 ### The URL may link to a pull request, commit, or tree.
