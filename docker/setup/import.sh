@@ -71,6 +71,12 @@ function setup_database() {
     next_step "${db_name}"
 }
 
+echo "Preparing files..."
+truncate_sql "osu_beatmap_difficulty_attribs"
+truncate_sql "osu_beatmap_difficulty"
+truncate_sql "osu_beatmap_failtimes"
+truncate_sql "osu_user_beatmap_playcount"
+
 echo "Creating databases..."
 setup_database "${OSU_A_HASH}"
 setup_database "${OSU_B_HASH}"
