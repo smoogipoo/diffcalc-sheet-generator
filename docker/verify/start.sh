@@ -22,7 +22,8 @@ function verify_scores() {
         -- \
         maintenance \
         verify-imported-scores \
-        --ruleset-id ${RULESET_ID}
+        --ruleset-id ${RULESET_ID} \
+        --quiet
 
     next_step "${db_name}"
 }
