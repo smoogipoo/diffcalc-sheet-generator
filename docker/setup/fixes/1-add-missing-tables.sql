@@ -60,6 +60,17 @@ CREATE TABLE IF NOT EXISTS `osu_beatmap_scoring_attribs` (
   PRIMARY KEY (`beatmap_id`, `mode`)
 );
 
+CREATE TABLE `score_pins` (
+  `user_id` int unsigned NOT NULL,
+  `score_id` bigint unsigned NOT NULL,
+  `ruleset_id` smallint unsigned NOT NULL,
+  `display_order` double(8,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`score_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
 
 -- May be temporarily required as components are updated to the new table terminology. See: https://github.com/ppy/osu-infrastructure/issues/24
