@@ -1,5 +1,3 @@
-version: '3.8'
-
 x-build-context: &x-build-context
   context: ./docker
   dockerfile: Dockerfile
