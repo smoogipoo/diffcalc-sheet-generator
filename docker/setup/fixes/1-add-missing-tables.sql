@@ -72,7 +72,3 @@ CREATE TABLE `score_pins` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
-
--- May be temporarily required as components are updated to the new table terminology. See: https://github.com/ppy/osu-infrastructure/issues/24
-CREATE VIEW solo_scores AS SELECT * FROM scores;
-CREATE VIEW solo_scores_process_history AS SELECT * FROM score_process_history;
