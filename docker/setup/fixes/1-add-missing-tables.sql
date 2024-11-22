@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `osu_beatmap_scoring_attribs` (
   PRIMARY KEY (`beatmap_id`, `mode`)
 );
 
-CREATE TABLE `score_pins` (
+CREATE TABLE IF NOT EXISTS `score_pins` (
   `user_id` int unsigned NOT NULL,
   `score_id` bigint unsigned NOT NULL,
   `ruleset_id` smallint unsigned NOT NULL,
@@ -69,6 +69,54 @@ CREATE TABLE `score_pins` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`score_id`),
   KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `osu_user_stats_mania_4k` (
+  `user_id` int unsigned NOT NULL,
+  `playcount` mediumint NOT NULL,
+  `x_rank_count` mediumint NOT NULL,
+  `xh_rank_count` mediumint DEFAULT '0',
+  `s_rank_count` mediumint NOT NULL,
+  `sh_rank_count` mediumint DEFAULT '0',
+  `a_rank_count` mediumint NOT NULL,
+  `country_acronym` char(2) NOT NULL DEFAULT '',
+  `rank_score` float unsigned NOT NULL,
+  `rank_score_index` int unsigned NOT NULL,
+  `rank_score_exp` float unsigned NOT NULL DEFAULT '0',
+  `rank_score_index_exp` int unsigned NOT NULL DEFAULT '0',
+  `accuracy_new` float unsigned NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_played` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  KEY `country_acronym_2` (`country_acronym`,`rank_score`),
+  KEY `playcount` (`playcount`),
+  KEY `rank_score` (`rank_score`),
+  KEY `rank_score_exp` (`rank_score_exp`),
+  KEY `country_acronym_exp` (`country_acronym`,`rank_score_exp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `osu_user_stats_mania_7k` (
+  `user_id` int unsigned NOT NULL,
+  `playcount` mediumint NOT NULL,
+  `x_rank_count` mediumint NOT NULL,
+  `xh_rank_count` mediumint DEFAULT '0',
+  `s_rank_count` mediumint NOT NULL,
+  `sh_rank_count` mediumint DEFAULT '0',
+  `a_rank_count` mediumint NOT NULL,
+  `country_acronym` char(2) NOT NULL DEFAULT '',
+  `rank_score` float unsigned NOT NULL,
+  `rank_score_index` int unsigned NOT NULL,
+  `rank_score_exp` float unsigned NOT NULL DEFAULT '0',
+  `rank_score_index_exp` int unsigned NOT NULL DEFAULT '0',
+  `accuracy_new` float unsigned NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_played` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  KEY `country_acronym_2` (`country_acronym`,`rank_score`),
+  KEY `playcount` (`playcount`),
+  KEY `rank_score` (`rank_score`),
+  KEY `rank_score_exp` (`rank_score_exp`),
+  KEY `country_acronym_exp` (`country_acronym`,`rank_score_exp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
