@@ -49,7 +49,7 @@ namespace Generator.Generators
 
             using (var db = await Database.GetConnection())
             {
-                string comparer = order == Order.Gains ? "> 0" : "< 0";
+                string comparer = order == Order.Gains ? $"> {Env.TOLERANCE}" : $"< {Env.TOLERANCE}";
 
                 IAsyncEnumerable<ScoreDiff> diffs = db.QueryUnbufferedAsync<ScoreDiff>(
                     "SELECT "

@@ -48,7 +48,7 @@ namespace Generator.Generators
 
             using (var db = await Database.GetConnection())
             {
-                string comparer = order == Order.Gains ? "> 0.1" : "< -0.1";
+                string comparer = order == Order.Gains ? $"> {Env.TOLERANCE}" : $"< -{Env.TOLERANCE}";
 
                 IAsyncEnumerable<BeatmapDiff> diffs = db.QueryUnbufferedAsync<BeatmapDiff>(
                     "SELECT "
