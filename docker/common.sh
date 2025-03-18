@@ -7,10 +7,12 @@ set -u
 : ${DB_PORT:=3306}
 : ${DB_USER:="root"}
 : ${MAX_DATABASE_SIZE:=0}
+: ${DB_USERS_TABLE:="sample_users"}
 
 export DB_HOST
 export DB_PORT
 export DB_USER
+export DB_USERS_TABLE
 
 
 MYSQL_ARGS=(
