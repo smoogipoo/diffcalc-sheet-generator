@@ -82,8 +82,7 @@ CREATE TABLE IF NOT EXISTS `osu_user_stats_mania_4k` (
   `country_acronym` char(2) NOT NULL DEFAULT '',
   `rank_score` float unsigned NOT NULL,
   `rank_score_index` int unsigned NOT NULL,
-  `rank_score_exp` float unsigned NOT NULL DEFAULT '0',
-  `rank_score_index_exp` int unsigned NOT NULL DEFAULT '0',
+  `ranked_score` bigint NOT NULL DEFAULT '0',
   `accuracy_new` float unsigned NOT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `last_played` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -91,8 +90,8 @@ CREATE TABLE IF NOT EXISTS `osu_user_stats_mania_4k` (
   KEY `country_acronym_2` (`country_acronym`,`rank_score`),
   KEY `playcount` (`playcount`),
   KEY `rank_score` (`rank_score`),
-  KEY `rank_score_exp` (`rank_score_exp`),
-  KEY `country_acronym_exp` (`country_acronym`,`rank_score_exp`)
+  KEY `ranked_score` (`ranked_score`),
+  KEY `country_ranked_score` (`country_acronym`,`ranked_score`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE IF NOT EXISTS `osu_user_stats_mania_7k` (
@@ -106,8 +105,7 @@ CREATE TABLE IF NOT EXISTS `osu_user_stats_mania_7k` (
   `country_acronym` char(2) NOT NULL DEFAULT '',
   `rank_score` float unsigned NOT NULL,
   `rank_score_index` int unsigned NOT NULL,
-  `rank_score_exp` float unsigned NOT NULL DEFAULT '0',
-  `rank_score_index_exp` int unsigned NOT NULL DEFAULT '0',
+  `ranked_score` bigint NOT NULL DEFAULT '0',
   `accuracy_new` float unsigned NOT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `last_played` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -115,8 +113,6 @@ CREATE TABLE IF NOT EXISTS `osu_user_stats_mania_7k` (
   KEY `country_acronym_2` (`country_acronym`,`rank_score`),
   KEY `playcount` (`playcount`),
   KEY `rank_score` (`rank_score`),
-  KEY `rank_score_exp` (`rank_score_exp`),
-  KEY `country_acronym_exp` (`country_acronym`,`rank_score_exp`)
+  KEY `ranked_score` (`ranked_score`),
+  KEY `country_ranked_score` (`country_acronym`,`ranked_score`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-DELETE FROM `osu_counts` WHERE `name` = 'slave_latency';
