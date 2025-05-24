@@ -10,6 +10,7 @@ public static class Env
     public static readonly string DB_A;
     public static readonly string DB_B;
     public static readonly bool NO_CONVERTS;
+    public static readonly bool NO_ASPIRE;
     public static readonly bool RANKED_ONLY;
     public static readonly double TOLERANCE;
     public static readonly string[] GENERATOR_LIST;
@@ -24,6 +25,7 @@ public static class Env
         DB_A = Environment.GetEnvironmentVariable("OSU_A_HASH") ?? throw new InvalidOperationException("Missing OSU_A_HASH environment variable.");
         DB_B = Environment.GetEnvironmentVariable("OSU_B_HASH") ?? throw new InvalidOperationException("Missing OSU_B_HASH environment variable.");
         NO_CONVERTS = Environment.GetEnvironmentVariable("NO_CONVERTS") == "1";
+        NO_ASPIRE = Environment.GetEnvironmentVariable("NO_ASPIRE") == "1";
         RANKED_ONLY = Environment.GetEnvironmentVariable("RANKED_ONLY") == "1";
         TOLERANCE = double.TryParse(Environment.GetEnvironmentVariable("TOLERANCE"), out double tolerance) ? tolerance : 0.1;
 

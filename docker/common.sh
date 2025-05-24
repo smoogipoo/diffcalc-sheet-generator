@@ -224,6 +224,7 @@ export RULESET_ID
 export OSU_A_HASH
 export OSU_B_HASH
 export NO_CONVERTS
+export NO_ASPIRE
 export RANKED_ONLY
 export GENERATORS
 export THREADS
