@@ -11,6 +11,7 @@ titleBuilder.Append($"{Env.RULESET}: ");
 titleBuilder.Append($"{Env.DB_A[..7]} (A) vs {Env.DB_B[..7]} (B) ");
 titleBuilder.Append("| ");
 titleBuilder.Append($"converts: {!Env.NO_CONVERTS}, ");
+titleBuilder.Append($"aspire: {!Env.NO_ASPIRE}, ");
 titleBuilder.Append($"ranked-only: {Env.RANKED_ONLY}");
 if (Env.MOD_FILTERS.Length != 0)
     titleBuilder.Append($", mods: {Env.MOD_FILTERS_RAW}");
