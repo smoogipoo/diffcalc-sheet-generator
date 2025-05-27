@@ -25,7 +25,7 @@ namespace Generator.Generators
             if (Env.NO_CONVERTS)
                 add(builder, $"`{selector}`.`playmode` = @RulesetId");
             if (Env.NO_ASPIRE)
-                add(builder, $"`{selector}`.`id` NOT IN {GetAspireBlacklistDatabaseArray()}");
+                add(builder, $"`{selector}`.`beatmap_id` NOT IN {getAspireBlacklistDatabaseArray()}");
             if (Env.RANKED_ONLY)
                 add(builder, $"`{selector}`.`approved` IN (1, 2)");
 
@@ -39,7 +39,7 @@ namespace Generator.Generators
             }
         }
 
-        private static string GetAspireBlacklistDatabaseArray()
+        private static string getAspireBlacklistDatabaseArray()
         {
             // technically there are some non-aspire maps here but the idea is still the same
             int[] aspireMapBlacklist =
