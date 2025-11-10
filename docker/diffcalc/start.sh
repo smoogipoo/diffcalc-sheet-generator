@@ -29,7 +29,8 @@ function run_processor() {
             all \
             --mode ${RULESET_ID} \
             --allow-converts \
-            --concurrency ${THREADS}
+            --concurrency ${THREADS} \
+            --no-notify
     }
 
     next_step "${db_name}"
