@@ -24,7 +24,6 @@ function process_scores() {
         performance \
         scores \
         all \
-        --ruleset ${RULESET_ID} \
         --threads ${THREADS}
 
     next_step "${db_name}"
@@ -53,7 +52,7 @@ function process_totals() {
         performance \
         user-totals \
         all \
-        --ruleset ${RULESET_ID} \
+        --ruleset-id ${RULESET_ID} \
         --threads ${THREADS}
 
     next_step "${db_name}"
