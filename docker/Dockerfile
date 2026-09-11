@@ -5,14 +5,14 @@
 FROM ubuntu:24.04 AS base
 
 # Important requirements (used by every image):
-# - dotnet-8
+# - dotnet-10
 # - mysql-client
 # - gh-cli
 # Everything else is various supporting tooling.
 RUN apt update \
     && apt install -y \
         wget \
-        dotnet-sdk-8.0 \
+        dotnet-sdk-10.0 \
         pv \
         git \
         mysql-client \
